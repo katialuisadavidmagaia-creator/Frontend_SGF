@@ -1,0 +1,63 @@
+{
+  "sidebar": {
+    "brand": "VERTICE",
+    "dashboard": "Dashboard",
+    "perfil": "Perfil",
+    "meusRelatorios": "Os meus relatórios",
+    "relatorios": "Relatórios",
+    "funcionarios": "Funcionários",
+    "departamentos": "Departamentos",
+    "projetos": "Projetos",
+    "aprovacoes": "Aprovações",
+    "estatisticas": "Estatísticas",
+    "usuarios": "Usuários",
+    "calendario": "Calendário",
+    "membros": "Membros",
+    "tasks": "Tasks",
+    "settings": "Settings",
+    "sair": "Sair"
+  },
+  "login": {
+    "titulo": "Acesso ao Sistema",
+    "subtitulo": "Insira as suas credenciais para continuar",
+    "email": "EMAIL",
+    "palavraPasse": "PALAVRA-PASSE",
+    "esqueceuPassword": "Esqueceu a palavra-passe?",
+    "entrar": "Entrar no Sistema",
+    "aEntrar": "A entrar...",
+    "ou": "OU",
+    "criarConta": "Criar conta",
+    "erroGenerico": "Credenciais inválidas. Tenta novamente.",
+    "slogan1": "Cada equipa,",
+    "slogan2": "um só lugar.",
+    "descricao": "Conectando Pessoas, Projetos e Resultados.",
+    "footer": "© 2026 — VERTICE. Gestão inteligente, Resultados reais"
+  },
+  "perfil": {
+    "aCarregar": "A carregar perfil...",
+    "naoEncontrado": "Funcionário não encontrado.",
+    "projetosAndamento": "Projetos em Andamento",
+    "semProjetosAndamento": "Nenhum projeto em andamento.",
+    "historicoProjetos": "Histórico de Projetos Concluídos",
+    "semProjetosConcluidos": "Nenhum projeto concluído ainda.",
+    "inicio": "início",
+    "concluidoEm": "concluído em",
+    "baixarPDF": "Baixar Relatório (PDF)"
+  },
+  "acessoNegado": {
+    "titulo": "Acesso negado",
+    "mensagem": "O teu perfil ({{role}}) não tem permissão para aceder a esta página.",
+    "voltar": "Voltar à minha área"
+  },
+  "comum": {
+    "carregando": "A carregar...",
+    "erro": "Ocorreu um erro. Tenta novamente."
+  },
+"dataTable": {
+  "novo": "Novo",
+  "pesquisar": "Pesquisar...",
+  "limparFiltros": "Limpar filtros",
+  "accoes": "Ações",
+  "semResultados": "Nenhum resultado encontrado."
+}
+}

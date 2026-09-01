@@ -1,30 +1,59 @@
 import { useMemo } from 'react';
-import { temPermissao } from '../shared/permissoes.ts';
-import type { Role, Modulo, Accao } from '../shared/permissoes.ts';
+import { useAuth } from '../context/authcontext';
+import { Role } from '../types/auth.types';
 
-function lerPayloadJWT(token: string): { id: number; email: string; role: Role } | null {
-  try {
-    const payload = token.split('.')[1];
-    return JSON.parse(atob(payload));
-  } catch {
-    return null;
-  }
-}
+type Accao = 'ver' | 'criar' | 'editar' | 'eliminar';
+
+const MATRIZ_PERMISSOES: Record<Role, Record<string, Accao[]>> = {
+  ADMIN: {
+    funcionarios: ['ver', 'criar', 'editar', 'eliminar'],
+    departamentos: ['ver', 'criar', 'editar', 'eliminar'],
+    projetos: ['ver', 'criar', 'editar', 'eliminar'],
+    relatorios: ['ver', 'criar', 'editar', 'eliminar'],
+    exportacoes: ['ver', 'criar', 'editar', 'eliminar'],
+    utilizadores: ['ver', 'criar', 'editar', 'eliminar'],
+  },
+
+  RH: {
+    funcionarios: ['ver', 'criar', 'editar'],
+    departamentos: ['ver'],
+    projetos: ['ver', 'criar', 'editar'],
+    relatorios: ['ver', 'criar'],
+    exportacoes: ['ver', 'criar'],
+    utilizadores: ['ver'],
+  },
+
+  FUNCIONARIO: {
+    funcionarios: ['ver'],
+    departamentos: ['ver'],
+    projetos: ['ver'],
+    relatorios: ['ver'],
+    exportacoes: [],
+    utilizadores: [],
+  },
+};
 
 export function usePermissoes() {
-  const payload = useMemo(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-    return lerPayloadJWT(token);
-  }, []);
+  const { utilizador } = useAuth();
 
-  const role: Role = payload?.role ?? 'FUNCIONARIO';
+  const pode = useMemo(() => {
+    return (modulo: string, accao: Accao): boolean => {
+      if (!utilizador) return false;
+
+      const acoesPermitidas =
+        MATRIZ_PERMISSOES[utilizador.role]?.[modulo] ?? [];
+
+      return acoesPermitidas.includes(accao);
+    };
+  }, [utilizador]);
 
   return {
-    role,
-    pode: (modulo: Modulo, accao: Accao) => temPermissao(role, modulo, accao),
-    isAdmin: role === 'ADMIN',
-    isRH: role === 'RH',
-    isUtilizador: role === 'FUNCIONARIO',
+    role: utilizador?.role ?? null,
+    pode,
+    isAdmin: utilizador?.role === 'ADMIN',
+    isRH: utilizador?.role === 'RH',
+    isUtilizador: utilizador?.role === 'FUNCIONARIO',
+    id: utilizador?.id ?? null,
+    email: utilizador?.email ?? null,
   };
 }

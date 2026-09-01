@@ -1,0 +1,63 @@
+{
+  "sidebar": {
+    "brand": "VERTICE",
+    "dashboard": "Dashboard",
+    "perfil": "Profile",
+    "meusRelatorios": "My reports",
+    "relatorios": "Reports",
+    "funcionarios": "Employees",
+    "departamentos": "Departments",
+    "projetos": "Projects",
+    "aprovacoes": "Approvals",
+    "estatisticas": "Statistics",
+    "usuarios": "Users",
+    "calendario": "Calendar",
+    "membros": "Members",
+    "tasks": "Tasks",
+    "settings": "Settings",
+    "sair": "Log out"
+  },
+  "login": {
+    "titulo": "System Access",
+    "subtitulo": "Enter your credentials to continue",
+    "email": "EMAIL",
+    "palavraPasse": "PASSWORD",
+    "esqueceuPassword": "Forgot your password?",
+    "entrar": "Sign In",
+    "aEntrar": "Signing in...",
+    "ou": "OR",
+    "criarConta": "Create account",
+    "erroGenerico": "Invalid credentials. Please try again.",
+    "slogan1": "Every team,",
+    "slogan2": "one place.",
+    "descricao": "Connecting People, Projects and Results.",
+    "footer": "© 2026 — VERTICE. Smart management, real results"
+  },
+  "perfil": {
+    "aCarregar": "Loading profile...",
+    "naoEncontrado": "Employee not found.",
+    "projetosAndamento": "Projects in Progress",
+    "semProjetosAndamento": "No projects in progress.",
+    "historicoProjetos": "Completed Projects History",
+    "semProjetosConcluidos": "No completed projects yet.",
+    "inicio": "started",
+    "concluidoEm": "completed on",
+    "baixarPDF": "Download Report (PDF)"
+  },
+  "acessoNegado": {
+    "titulo": "Access denied",
+    "mensagem": "Your profile ({{role}}) doesn't have permission to access this page.",
+    "voltar": "Back to my area"
+  },
+  "comum": {
+    "carregando": "Loading...",
+    "erro": "An error occurred. Please try again."
+  },
+"dataTable": {
+  "novo": "New",
+  "pesquisar": "Search...",
+  "limparFiltros": "Clear filters",
+  "accoes": "Actions",
+  "semResultados": "No results found."
+}
+}
