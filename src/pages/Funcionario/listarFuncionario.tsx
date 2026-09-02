@@ -123,28 +123,28 @@ export default function ListarFuncionario() {
     }
   };
 
-  const actions: Action<Funcionario>[] = [
-    {
-      icon: <IconEye />,
-      label: 'Visualizar',
-      onClick: (row) => {
-        navigate(`/dashboard/funcionario/${row.id}`);
-      },
+ const actions: Action<Funcionario>[] = [
+  {
+    icon: <IconEye />,
+    label: 'Visualizar',
+    onClick: (row) => {
+      navigate(`/dashboard/funcionarios/${row.id}`);
     },
-    {
-      icon: <IconEdit />,
-      label: 'Editar',
-      onClick: (row) => {
-        navigate(`/dashboard/editar-funcionario/${row.id}`);
-      },
+  },
+  {
+    icon: <IconEdit />,
+    label: 'Editar',
+    onClick: (row) => {
+      navigate(`/dashboard/funcionarios/${row.id}/editar`);
     },
-    {
-      icon: <IconTrash />,
-      label: 'Eliminar',
-      className: 'danger',
-      onClick: (row) => openDeleteDialog(row),
-    },
-  ];
+  },
+  {
+    icon: <IconTrash />,
+    label: 'Eliminar',
+    className: 'danger',
+    onClick: (row) => openDeleteDialog(row),
+  },
+];
 
   if (isLoading) return <p style={{ padding: '24px', fontFamily: 'sans-serif', color: '#666' }}>A carregar...</p>;
   if (error) return <p style={{ color: '#cc3333', padding: '24px', fontFamily: 'sans-serif' }}>{error}</p>;
@@ -160,8 +160,7 @@ export default function ListarFuncionario() {
         filters={filterConfig} 
         actions={actions}
         searchKeys={['name', 'email', 'departamento']}
-        onNew={() => navigate('/dashboard/registar-funcionario')} 
-        newLabel="Novo Funcionário"
+onNew={() => navigate('/dashboard/registar-funcionario')} 
       />
 
       {/* Modal de Confirmação */}

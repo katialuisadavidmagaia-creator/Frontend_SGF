@@ -6,9 +6,9 @@ const API = 'http://localhost:4003/api';
 
 interface FuncionarioDetalhes {
   id: number;
-  nome: string;
+  name: string;
   email: string;
-  criado_em: string;
+  criadoEm: string;
   departamento:string;
 }
 
@@ -26,7 +26,7 @@ export default function DetalhesFuncionario() {
 
     const token = localStorage.getItem('token');
     
-    fetch(`${API}/funcionario/${id}`, {
+    fetch(`${API}/funcionarios/${id}`, {
       headers: { 
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ export default function DetalhesFuncionario() {
         <div style={infoContainerStyle}>
           <div style={fieldGroupStyle}>
             <label style={labelStyle}>Nome Completo</label>
-            <p style={valueStyle}>{funcionario.nome}</p>
+            <p style={valueStyle}>{funcionario.name}</p>
           </div>
 
           <div style={fieldGroupStyle}>
@@ -76,7 +76,7 @@ export default function DetalhesFuncionario() {
           <div style={fieldGroupStyle}>
             <label style={labelStyle}>Data de Cadastro</label>
             <p style={valueStyle}>
-              {new Date(funcionario.criado_em).toLocaleString('pt-PT', {
+              {new Date(funcionario.criadoEm).toLocaleString('pt-PT', {
                 dateStyle: 'short',
                 timeStyle: 'short'
               })}

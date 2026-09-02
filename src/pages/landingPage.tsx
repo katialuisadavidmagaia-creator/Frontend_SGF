@@ -68,13 +68,13 @@ function Vertice() {
             >
               <Icon className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xs font-medium text-white/70 font-mono tracking-wide">{no.label}</span>
+            <span className="text-xs font-medium text-white/70 font-jakarta tracking-wide">{no.label}</span>
           </div>
         );
       })}
 
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 mt-14">
-        <span className="text-[10px] font-mono tracking-[0.2em] text-[#8FA4FF]">VERTICE</span>
+        <span className="text-[10px] font-jakarta tracking-[0.2em] text-[#8FA4FF]">VERTICE</span>
       </div>
     </div>
   );
@@ -98,103 +98,15 @@ const FUNCIONALIDADES = [
   },
 ];
 
-function DashboardPreview() {
-  return (
-    <div className="relative w-full max-w-md mx-auto select-none">
-      <div className="absolute -inset-6 bg-[#4F6EF7]/10 blur-3xl rounded-3xl" />
-
-      <div className="relative rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#0F1B33] animate-[fadeIn_0.6s_ease-out]">
-        <div className="flex h-[280px]">
-          {/* Sidebar em miniatura */}
-          <div className="w-16 bg-[#0A1224] border-r border-white/10 flex flex-col items-center py-4 gap-4">
-            <div className="w-6 h-6 rounded-md bg-[#4F6EF7]" />
-            <div className="w-full h-px bg-white/10 my-1" />
-            <div className="w-8 h-8 rounded-lg bg-[#4F6EF7]/30 flex items-center justify-center">
-              <div className="w-3.5 h-3.5 rounded-sm bg-[#8FA4FF]" />
-            </div>
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center">
-              <div className="w-3.5 h-3.5 rounded-sm bg-white/20" />
-            </div>
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center">
-              <div className="w-3.5 h-3.5 rounded-sm bg-white/20" />
-            </div>
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center">
-              <div className="w-3.5 h-3.5 rounded-sm bg-white/20" />
-            </div>
-          </div>
-
-          {/* Conteúdo principal */}
-          <div className="flex-1 flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-              <div className="h-2.5 w-24 rounded-full bg-white/20" />
-              <div className="w-6 h-6 rounded-full bg-[#4F6EF7]" />
-            </div>
-
-            {/* Cards de estatística */}
-            <div className="grid grid-cols-3 gap-2 p-3">
-              {[
-                { valor: '128', cor: 'bg-[#4F6EF7]' },
-                { valor: '34', cor: 'bg-[#6D5DF6]' },
-                { valor: '9', cor: 'bg-[#8FA4FF]' },
-              ].map((c, i) => (
-                <div key={i} className="bg-white/5 rounded-lg p-2.5">
-                  <div className={`w-1.5 h-1.5 rounded-full ${c.cor} mb-2`} />
-                  <p className="text-white text-sm font-bold font-sora leading-none mb-1">{c.valor}</p>
-                  <div className="h-1.5 w-10 rounded-full bg-white/15" />
-                </div>
-              ))}
-            </div>
-
-            {/* Novo Gráfico (Substituiu a mini tabela aqui) */}
-            <div className="flex-1 mx-3 mb-3 bg-white/5 rounded-lg p-3 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <div className="h-1.5 w-16 rounded-full bg-white/20" />
-                <div className="h-1.5 w-8 rounded-full bg-[#4F6EF7]" />
-              </div>
-              
-              <div className="relative h-16 w-full flex items-end">
-                <svg className="w-full h-full overflow-visible" viewBox="0 0 100 40" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#4F6EF7" stopOpacity="0.4" />
-                      <stop offset="100%" stopColor="#4F6EF7" stopOpacity="0.0" />
-                    </linearGradient>
-                  </defs>
-                  <path
-                    d="M 0 30 Q 25 10, 50 22 T 100 5 L 100 40 L 0 40 Z"
-                    fill="url(#chartGradient)"
-                  />
-                  <path
-                    d="M 0 30 Q 25 10, 50 22 T 100 5"
-                    fill="none"
-                    stroke="#4F6EF7"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2 mt-4 justify-center">
-        <span className="text-[10px] font-mono tracking-[0.2em] text-[#8FA4FF]">PAINEL DE GESTÃO</span>
-      </div>
-    </div>
-  );
-}
-
 export default function Landing() {
   return (
     <div className="min-h-screen bg-[#0A1224] text-white overflow-x-hidden">
       <nav className="flex items-center justify-between px-6 md:px-10 py-6 max-w-6xl mx-auto">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#4F6EF7] flex items-center justify-center font-bold text-xs font-sora">
+          <div className="w-8 h-8 rounded-lg bg-[#4F6EF7] flex items-center justify-center font-bold text-xs font-jakarta">
             V
           </div>
-          <span className="font-bold tracking-wide text-sm font-sora">VERTICE</span>
+          <span className="font-bold tracking-wide text-sm font-jakarta">VERTICE</span>
         </div>
         <Link
           to="/login"
@@ -203,38 +115,50 @@ export default function Landing() {
           Entrar
         </Link>
       </nav>
+      <section className="relative w-full min-h-[600px] flex items-center overflow-hidden py-16 md:py-24">
+  {/* 1. Imagem de Fundo (Preenche toda a secção) */}
+  <img
+    src="https://duledigital.com.br/uploads/blog/landing-page-o-que-e-como-funciona-e-por-que-sua-empresa-precisa-de-uma_20260815.png"
+    alt="Painel de gestão do sistema"
+    className="absolute inset-0 w-full h-full object-cover object-center z-0"
+  />
 
-      <section className="max-w-6xl mx-auto px-6 md:px-10 pt-12 md:pt-20 pb-24 grid md:grid-cols-2 gap-12 items-center">
-        <div>
-          <span className="inline-block text-xs font-mono tracking-wider text-[#8FA4FF] border border-[#8FA4FF]/30 rounded-full px-3 py-1 mb-6">
-            Gestão Inteligente de Equipas 
-          </span>
-          <h1 className="text-4xl md:text-6xl font-extrabold font-sora leading-[1.05] mb-6">
-            Cada equipa,<br />um só lugar.
-          </h1>
-          <p className="text-white/60 text-base md:text-lg mb-8 max-w-md">
-            Pessoas, projetos, departamentos e relatórios, todos a convergir num único sistema. Sem folhas de cálculo espalhadas, sem processos duplicados.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              to="/login"
-              className="flex items-center gap-2 bg-[#4F6EF7] hover:bg-[#3d5ce0] text-white font-semibold rounded-lg px-5 py-3 text-sm transition-colors"
-            >
-              Aceder ao sistema
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              to="/registo"
-              className="flex items-center gap-2 border border-white/20 hover:bg-white/5 text-white font-semibold rounded-lg px-5 py-3 text-sm transition-colors"
-            >
-              Criar conta
-            </Link>
-          </div>
-        </div>
+  {/* 2. Overlay Escuro / Gradiente (Garante que o texto fique legível sobre a imagem) */}
+  <div className="absolute inset-0 bg-gradient-to-r from-[#0B0F19] via-[#0B0F19]/80 to-transparent z-10" />
 
-        <DashboardPreview />
-      </section>
+  {/* 3. Conteúdo sobreposto */}
+  <div className="relative z-20 max-w-6xl mx-auto px-6 md:px-10 w-full">
+    <div className="max-w-xl">
+      <span className="inline-block font-jakarta font-medium text-sm text-white/80 mb-5">
+        Gestão inteligente de equipas
+      </span>
+      
+      <h1 className="text-4xl md:text-6xl font-extrabold font-jakarta text-white leading-[1.05] mb-6">
+        Cada equipa,<br />um só lugar.
+      </h1>
 
+      <p className="font-jakarta text-white/80 text-base md:text-lg mb-8">
+        Pessoas, projetos, departamentos e relatórios, todos a convergir num único sistema. Sem folhas de cálculo espalhadas, sem processos duplicados.
+      </p>
+
+      <div className="flex flex-wrap gap-3">
+        <Link
+          to="/login"
+          className="flex items-center gap-2 bg-[#4F6EF7] hover:bg-[#3d5ce0] text-white font-jakarta font-semibold rounded-lg px-5 py-3 text-sm transition-colors shadow-lg"
+        >
+          Aceder ao sistema
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+        <Link
+          to="/registo"
+          className="flex items-center gap-2 border border-white/30 hover:bg-white/10 text-white font-jakarta font-semibold rounded-lg px-5 py-3 text-sm transition-colors backdrop-blur-sm"
+        >
+          Criar conta
+        </Link>
+      </div>
+    </div>
+  </div>
+</section>
       <section className="border-t border-white/10 bg-[#0F1B33]">
         <div className="max-w-6xl mx-auto px-6 md:px-10 py-16 grid md:grid-cols-3 gap-8">
           {FUNCIONALIDADES.map(({ icon: Icon, titulo, descricao }) => (
@@ -242,7 +166,7 @@ export default function Landing() {
               <div className="h-10 w-10 rounded-lg bg-[#4F6EF7]/15 flex items-center justify-center mb-4">
                 <Icon className="h-5 w-5 text-[#8FA4FF]" />
               </div>
-              <h3 className="font-sora font-bold text-lg mb-2">{titulo}</h3>
+              <h3 className="font-jakarta font-bold text-lg mb-2">{titulo}</h3>
               <p className="text-white/55 text-sm leading-relaxed">{descricao}</p>
             </div>
           ))}
@@ -250,7 +174,7 @@ export default function Landing() {
       </section>
 
       <section className="max-w-6xl mx-auto px-6 md:px-10 py-20 text-center">
-        <h2 className="text-2xl md:text-4xl font-sora font-extrabold mb-4">
+        <h2 className="text-2xl md:text-4xl font-jakarta font-extrabold mb-4">
           Pronto para organizar a tua equipa?
         </h2>
         <p className="text-white/55 mb-8 max-w-md mx-auto">
