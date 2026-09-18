@@ -1,0 +1,256 @@
+
+{
+
+
+"dashboard": {
+  "title": "Overview",
+  "description": "Monitor the main indicators, projects, reports and tasks in the system.",
+
+  "statistics": {
+    "employees": "Employees",
+    "departments": "Departments",
+    "projects": "Projects",
+    "reports": "Reports",
+    "tasks": "Tasks"
+  },
+
+  "projectOverview": {
+    "title": "Project overview",
+    "description": "Distribution of projects by status.",
+    "empty": "There are no registered projects yet."
+  },
+
+  "projectStatus": {
+    "PLANEADO": "Planned",
+    "EM_ANDAMENTO": "In progress",
+    "CONCLUIDO": "Completed",
+    "CANCELADO": "Cancelled"
+  },
+
+  "projectProgress": {
+    "title": "Project progress",
+    "description": "Monitor the status and overall progress of projects.",
+    "completedPercentage": "Completed projects"
+  },
+
+  "reports": {
+    "title": "Reports summary",
+    "description": "Monitor the status of reports registered in the system.",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "completed": "Completed"
+  },
+
+  "tasks": {
+    "title": "Tasks summary",
+    "description": "Monitor the status of project tasks.",
+    "pending": "Pending tasks",
+    "pendingDescription": "Tasks waiting to be started.",
+    "inProgress": "In progress",
+    "inProgressDescription": "Tasks currently being worked on.",
+    "completed": "Completed",
+    "completedDescription": "Tasks that have been completed."
+  }
+},
+  "calendar": {
+    "title": "Calendar",
+    "description": "Track projects, tasks, reports, meetings and events.",
+    "newEvent": "New event",
+    "filters": {
+      "all": "All"
+    },
+    "types": {
+      "PROJETO": "Projects",
+      "TASK": "Tasks",
+      "RELATORIO": "Reports",
+      "REUNIAO": "Meetings",
+      "EVENTO": "Events"
+    },
+    "fields": {
+      "title": "Title",
+      "type": "Type",
+      "date": "Date",
+      "time": "Time",
+      "description": "Description"
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "weekdays": {
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    }
+  },
+
+  "tasks": {
+    "title": "Tasks",
+    "description": "Create, track and manage project and team tasks.",
+    "newTask": "New task",
+    "editTask": "Edit task",
+    "createDescription": "Create a new task and assign it to a responsible person.",
+    "editDescription": "Update the information and status of this task.",
+    "statistics": {
+      "total": "Total tasks",
+      "pending": "Pending",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "overdue": "Overdue"
+    },
+    "search": "Search tasks...",
+    "filters": {
+      "allStatuses": "All statuses",
+      "allPriorities": "All priorities"
+    },
+    "status": {
+      "PENDENTE": "Pending",
+      "EM_ANDAMENTO": "In progress",
+      "CONCLUIDA": "Completed",
+      "CANCELADA": "Cancelled"
+    },
+    "priority": {
+      "BAIXA": "Low",
+      "MEDIA": "Medium",
+      "ALTA": "High"
+    },
+    "overdue": "Overdue",
+    "project": "Project",
+    "responsible": "Responsible",
+    "startDate": "Start date",
+    "deadline": "Deadline",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "Enter task title",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the task",
+      "status": "Status",
+      "priority": "Priority",
+      "selectProject": "Select project",
+      "selectResponsible": "Select responsible person",
+      "startDate": "Start date",
+      "deadline": "Deadline"
+    },
+    "empty": "No tasks found",
+    "emptyDescription": "There are no registered tasks yet.",
+    "emptySearch": "No task matches your search.",
+    "deleteConfirmation": "Are you sure you want to delete this task?",
+    "validation": {
+      "title": "Enter the task title."
+    },
+    "errors": {
+      "load": "Unable to load tasks.",
+      "save": "Unable to save the task.",
+      "delete": "Unable to delete the task."
+    }
+  },
+
+  "users": {
+    "title": "Users",
+    "description": "Manage access accounts, roles and system permissions.",
+    "newUser": "New user",
+    "editUser": "Edit user",
+    "editDescription": "Update this user's information and access level.",
+    "createDescription": "Create a new system access account.",
+    "listTitle": "User list",
+    "results": "result(s)",
+    "search": "Search by name, email or role...",
+    "user": "User",
+    "email": "Email",
+    "role": "Role",
+    "employee": "Employee",
+    "empty": "No users found",
+    "emptySearch": "Try changing your search terms.",
+    "emptyDescription": "There are no registered users yet.",
+    "deleteConfirmation": "Are you sure you want to delete the user",
+    "statistics": {
+      "total": "Total users",
+      "admins": "Administrators",
+      "hr": "Human Resources",
+      "employees": "Employees"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "hr": "Human Resources",
+      "employee": "Employee"
+    },
+    "fields": {
+      "name": "Full name",
+      "namePlaceholder": "Enter full name",
+      "email": "Email",
+      "emailPlaceholder": "Enter email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter password",
+      "passwordOptional": "Leave empty to keep the current password",
+      "role": "Role"
+    },
+    "validation": {
+      "name": "Enter the user's name.",
+      "email": "Enter the user's email.",
+      "password": "Enter the password."
+    },
+    "errors": {
+      "save": "Unable to save the user.",
+      "delete": "Unable to delete the user."
+    }
+  },
+
+  "members": {
+    "title": "Members",
+    "description": "View organization members and employees.",
+    "team": "Team",
+    "members": "members",
+    "search": "Search member...",
+    "empty": "No members found."
+  },
+
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "loading": "Loading..."
+  },
+
+  "settings": {
+    "title": "Settings",
+    "description": "Customize your account and application preferences.",
+    "language": {
+      "title": "Language",
+      "description": "Choose the application language.",
+      "portuguese": "Portuguese",
+      "english": "English"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Choose how the application should look.",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Configure application notifications.",
+      "enable": "Enable notifications"
+    },
+    "security": {
+      "title": "Security",
+      "description": "Manage your account security.",
+      "changePassword": "Change password"
+    }
+  }
+}

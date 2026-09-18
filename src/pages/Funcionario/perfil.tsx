@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { usePermissoes } from '../../hooks/usePermissoes';
 import { Building2, Mail, User as UserIcon } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 const API_URL = 'http://localhost:4003/api';
 
@@ -35,7 +34,6 @@ function RoleBadge({ role }: { role: string }) {
 }
 
 export default function Perfil() {
-  const {t}=useTranslation();
   const { role } = usePermissoes();
 
   const [funcionario, setFuncionario] = useState<Funcionario | null>(null);

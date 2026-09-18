@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 
 const API = 'http://localhost:4003/api';
 
@@ -13,7 +12,6 @@ interface FuncionarioDetalhes {
 }
 
 export default function DetalhesFuncionario() {
-  const{t}=useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   

@@ -1,41 +1,112 @@
 import { api } from './api';
-import { CriarProjetoPayload, EditarProjetoPayload, Projeto } from '../types/projeto.types';
-import { useTranslation } from 'react-i18next';
+
+import type {
+  Projeto,
+  CriarProjetoPayload,
+} from '../types/projeto.types';
+
+interface RespostaApi<T> {
+  sucesso?: boolean;
+  dados?: T;
+  mensagem?: string;
+}
+
+function extrairDados<T>(resposta: T | RespostaApi<T>): T {
+  if (
+    resposta &&
+    typeof resposta === 'object' &&
+    'dados' in resposta
+  ) {
+    const respostaApi = resposta as RespostaApi<T>;
+
+    if (respostaApi.dados !== undefined) {
+      return respostaApi.dados;
+    }
+  }
+
+  return resposta as T;
+}
 
 export const projetosService = {
   async listar(): Promise<Projeto[]> {
-    const{t}=useTranslation();
-    const { data } = await api.get<Projeto[]>('/projetos');
-    return data;
+    const { data } =
+      await api.get<Projeto[] | RespostaApi<Projeto[]>>(
+        '/projetos'
+      );
+
+    return extrairDados(data);
   },
 
-  async listarPorDepartamento(departamentoId: string): Promise<Projeto[]> {
-    const { data } = await api.get<Projeto[]>('/projetos', {
-      params: { departamentoId },
-    });
-    return data;
+  async obterPorId(
+    id: number | string
+  ): Promise<Projeto> {
+    const { data } =
+      await api.get<Projeto | RespostaApi<Projeto>>(
+        `/projetos/${id}`
+      );
+
+    return extrairDados(data);
   },
 
-  async obterPorId(id: string): Promise<Projeto> {
-    const { data } = await api.get<Projeto>(`/projetos/${id}`);
-    return data;
+  async criar(
+    payload: CriarProjetoPayload
+  ): Promise<Projeto> {
+    const { data } =
+      await api.post<Projeto | RespostaApi<Projeto>>(
+        '/projetos',
+        payload
+      );
+
+    return extrairDados(data);
   },
 
-  async criar(payload: CriarProjetoPayload): Promise<Projeto> {
-    const { data } = await api.post<Projeto>('/projetos', payload);
-    return data;
+  async editar(
+    id: number | string,
+    payload: CriarProjetoPayload
+  ): Promise<Projeto> {
+    const { data } =
+      await api.put<Projeto | RespostaApi<Projeto>>(
+        `/projetos/${id}`,
+        payload
+      );
+
+    return extrairDados(data);
   },
 
-  async editar(id: string, payload: EditarProjetoPayload): Promise<Projeto> {
-    const { data } = await api.put<Projeto>(`/projetos/${id}`, payload);
-    return data;
-  },
-
-  async eliminar(id: string): Promise<void> {
+  async eliminar(
+    id: number | string
+  ): Promise<void> {
     await api.delete(`/projetos/${id}`);
   },
-  
-  async atribuirFuncionario(projetoId: number, funcionarioId: number) {
-  
-  }
+
+  async atribuirFuncionario(
+    projetoId: number | string,
+    funcionarioId: number
+  ) {
+    const { data } =
+      await api.post(
+        `/projetos/${projetoId}/funcionarios`,
+        {
+          funcionarioId,
+        }
+      );
+
+    return extrairDados(data);
+  },
+
+  async atualizarStatusFuncionario(
+    projetoId: number | string,
+    funcionarioId: number,
+    status: string
+  ) {
+    const { data } =
+      await api.patch(
+        `/projetos/${projetoId}/funcionarios/${funcionarioId}`,
+        {
+          status,
+        }
+      );
+
+    return extrairDados(data);
+  },
 };

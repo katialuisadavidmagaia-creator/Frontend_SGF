@@ -1,23 +1,17 @@
 import axios from 'axios';
-import { useTranslation } from 'react-i18next';
 
 
-const{t}=useTranslation();
 const AUTH_API_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:4003/api/auth';
-
-const FUNCIONARIO_API_URL =
-  import.meta.env.VITE_FUNCIONARIO_API_URL ||
-  'http://localhost:4003/api/funcionarios';
+const funcionarioApi = axios.create({
+  baseURL: 'http://localhost:4003/api/funcionarios',
+});
 
 
 const authApi = axios.create({
   baseURL: AUTH_API_URL,
 });
 
-const funcionarioApi = axios.create({
-  baseURL: FUNCIONARIO_API_URL,
-});
 
 
 // Interceptor para adicionar token automaticamente
@@ -181,15 +175,23 @@ const FuncionarioService = {
     return data;
   },
 
+async listarTodos(): Promise<Funcionario[]> {
+  const { data } = await funcionarioApi.get('/');
 
-  async listarTodos(): Promise<Funcionario[]> {
-
-    const { data } = await funcionarioApi.get(
-      '/'
-    );
-
+  if (Array.isArray(data)) {
     return data;
-  },
+  }
+
+  if (Array.isArray(data?.dados)) {
+    return data.dados;
+  }
+
+  if (Array.isArray(data?.data)) {
+    return data.data;
+  }
+
+  return [];
+},
 
 
   async atualizar(

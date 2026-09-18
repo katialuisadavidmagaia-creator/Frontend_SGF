@@ -1,10 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { usePermissoes } from '../hooks/usePermissoes';
-import { useTranslation } from 'react-i18next';
 
 export default function AcessoNegado() {
-  const {t}=useTranslation();
   const navigate = useNavigate();
   const { role } = usePermissoes();
 

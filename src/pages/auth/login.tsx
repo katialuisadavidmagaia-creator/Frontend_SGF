@@ -19,7 +19,10 @@ export default function Login() {
     setACarregar(true);
 
     try {
-      await login({ email, password });
+      await login({
+  email,
+  senha: password,
+});
       navigate('/dashboard');
     } catch (err: any) {
       const mensagem =
@@ -31,6 +34,8 @@ export default function Login() {
       setACarregar(false);
     }
   }
+
+  
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">

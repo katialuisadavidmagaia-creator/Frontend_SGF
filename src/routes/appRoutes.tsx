@@ -9,7 +9,7 @@ import DetalhesFuncionario from 'src/pages/Funcionario/detalhesFuncionario';
 import { DashboardLayout } from '../components/layout/dashboardLayout';
 import EditarFuncionario from 'src/pages/Funcionario/editarFuncionario';
 import ListarFuncionario from '../pages/Funcionario/listarFuncionario';
-import { ProjetosPage } from '../pages/Projetos';
+import Projetos from 'src/pages/Projetos';
 import Perfil from '../pages/perfil';
 import RelatoriosPage from '../pages/relatorios';
 import { Departamentos } from 'src/pages/departamento';
@@ -111,7 +111,7 @@ export function AppRoutes() {
                     modulo="projetos"
                     accao="ver"
                   >
-                    <ProjetosPage />
+                    <Projetos />
                   </ProtectedRoute>
                 }
               />

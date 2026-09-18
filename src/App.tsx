@@ -8,23 +8,23 @@ import Registo from './pages/auth/registo';
 import Recuperar from './pages/auth/recuperarPassword';
 import RedefinirPassword from './pages/auth/redefinirpassword';
 
-// Layout / proteção
+// Layout / Proteção
 import DashboardLayout from './components/layout/dashboardLayout';
 import { ProtectedRoute } from './routes/protectedRoutes';
 
 // Páginas
+import Dashboard from './pages/dashboard';
 import Perfil from './pages/perfil';
 
 import PerfilFuncionario from './pages/Funcionario/perfil';
 import ListarFuncionario from './pages/Funcionario/listarFuncionario';
 import DetalhesFuncionario from './pages/Funcionario/detalhesFuncionario';
 import EditarFuncionario from './pages/Funcionario/editarFuncionario';
-
 import { Departamentos } from './pages/departamento';
-import { ProjetosPage } from './pages/Projetos';
+import Projetos from './pages/Projetos';
 
 import Relatorios from './pages/relatorios';
-import MeusRelatorios from './pages/dashboard/meusRelatorios';
+import MeusRelatorios from './pages/dashboard/meusRelatorios'; 
 import Aprovacoes from './pages/dashboard/aprovacoes';
 import Estatisticas from './pages/dashboard/estatisticas';
 
@@ -36,241 +36,69 @@ import Membros from './pages/topo/membros';
 
 import AcessoNegado from './pages/acessoNegado';
 
-function App() {
+export function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* =====================================================
             PÁGINAS PÚBLICAS
         ===================================================== */}
-
         <Route path="/" element={<LandingPage />} />
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/registo" element={<Registo />} />
-
-        <Route
-          path="/recuperar-password"
-          element={<Recuperar />}
-        />
-
-        <Route
-          path="/redefinir-password"
-          element={<RedefinirPassword />}
-        />
-
+        <Route path="/recuperar-password" element={<Recuperar />} />
+        <Route path="/redefinir-password" element={<RedefinirPassword />} />
 
         {/* =====================================================
             ÁREA PROTEGIDA
         ===================================================== */}
-
         <Route element={<ProtectedRoute />}>
-
-          {/* ===================================================
-              LAYOUT PRINCIPAL
-          =================================================== */}
-
           <Route element={<DashboardLayout />}>
 
-            {/* Dashboard principal */}
-            <Route
-              path="/dashboard"
-              element={
-                <Navigate
-                  to="/dashboard/perfil"
-                  replace
-                />
-              }
-            />
+            {/* Dashboard Principal */}
+            <Route path="/dashboard" element={<Dashboard />} />
 
+            {/* Perfil */}
+            <Route path="/dashboard/perfil" element={<Perfil />} />
 
-            {/* =================================================
-                PERFIL
-            ================================================= */}
-
-            <Route
-              path="/dashboard/perfil"
-              element={<Perfil />}
-            />
-
-
-            {/* =================================================
-                FUNCIONÁRIO
-            ================================================= */}
-
-            <Route
-              element={
-                <ProtectedRoute
-                  permitido={['ADMIN', 'RH']}
-                />
-              }
-            >
-
-              {/* Lista de funcionários */}
-              <Route
-                path="/dashboard/funcionarios"
-                element={<ListarFuncionario />}
-              />
-
-              {/* Detalhes */}
-              <Route
-                path="/dashboard/funcionarios/:id"
-                element={<DetalhesFuncionario />}
-              />
-
-              {/* Editar */}
-              <Route
-                path="/dashboard/funcionarios/:id/editar"
-                element={<EditarFuncionario />}
-              />
-
-              {/* Perfil do funcionário */}
-              <Route
-                path="/dashboard/funcionarios/:id/perfil"
-                element={<PerfilFuncionario />}
-              />
-
-
-              {/* =================================================
-                  DEPARTAMENTOS
-              ================================================= */}
-
-              <Route
-                path="/dashboard/departamentos"
-                element={<Departamentos />}
-              />
-
-
-              {/* =================================================
-                  PROJETOS
-              ================================================= */}
-
-              <Route
-                path="/dashboard/projetos"
-                element={<ProjetosPage />}
-              />
-
-
-              {/* =================================================
-                  RELATÓRIOS
-              ================================================= */}
-
-              <Route
-                path="/dashboard/relatorios"
-                element={<Relatorios />}
-              />
-
-
-              {/* =================================================
-                  APROVAÇÕES
-              ================================================= */}
-
-              <Route
-                path="/dashboard/aprovacoes"
-                element={<Aprovacoes />}
-              />
-
-
-              {/* =================================================
-                  ESTATÍSTICAS
-              ================================================= */}
-
-              <Route
-                path="/dashboard/estatisticas"
-                element={<Estatisticas />}
-              />
-
-
-              {/* =================================================
-                  USUÁRIOS
-              ================================================= */}
-
-              <Route
-                path="/usuarios"
-                element={<Usuarios />}
-              />
-
+            {/* FUNCIONÁRIOS E GESTÃO (RH / ADMIN) */}
+            <Route element={<ProtectedRoute permitido={['ADMIN', 'RH']} />}>
+              <Route path="/dashboard/funcionarios" element={<ListarFuncionario />} />
+              <Route path="/dashboard/funcionarios/novo" element={<EditarFuncionario />} />
+              <Route path="/dashboard/funcionarios/:id" element={<DetalhesFuncionario />} />
+              <Route path="/dashboard/funcionarios/:id/editar" element={<EditarFuncionario />} />
+              <Route path="/dashboard/funcionarios/:id/perfil" element={<PerfilFuncionario />} />
+              
+              <Route path="/dashboard/departamentos" element={<Departamentos />} />
+              <Route path="/dashboard/projetos" element={<Projetos />} />
+              <Route path="/dashboard/relatorios" element={<Relatorios />} />
+              <Route path="/dashboard/aprovacoes" element={<Aprovacoes />} />
+              <Route path="/dashboard/estatisticas" element={<Estatisticas />} />
+              <Route path="/usuarios" element={<Usuarios />} />
             </Route>
 
-
-            {/* =================================================
-                FUNCIONÁRIO NORMAL
-            ================================================= */}
-
-            <Route
-              element={
-                <ProtectedRoute
-                  permitido={['FUNCIONARIO']}
-                />
-              }
-            >
-
-              <Route
-                path="/dashboard/meus-relatorios"
-                element={<MeusRelatorios />}
-              />
-
+            {/* FUNCIONÁRIO NORMAL */}
+            <Route element={<ProtectedRoute permitido={['FUNCIONARIO']} />}>
+              <Route path="/dashboard/meus-relatorios" element={<MeusRelatorios />} />
             </Route>
 
-
-            {/* =================================================
-                MENU SUPERIOR
-            ================================================= */}
-
-            <Route
-              path="/calendario"
-              element={<Calendario />}
-            />
-
-            <Route
-              path="/membros"
-              element={<Membros />}
-            />
-
-            <Route
-              path="/tasks"
-              element={<Tasks />}
-            />
-
-            <Route
-              path="/settings"
-              element={<Settings />}
-            />
+            {/* MENU SUPERIOR */}
+            <Route path="/calendario" element={<Calendario />} />
+            <Route path="/membros" element={<Membros />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/settings" element={<Settings />} />
 
           </Route>
 
-
-          {/* ===================================================
-              ACESSO NEGADO
-          =================================================== */}
-
-          <Route
-            path="/acesso-negado"
-            element={<AcessoNegado />}
-          />
-
+          <Route path="/acesso-negado" element={<AcessoNegado />} />
         </Route>
 
-
-        {/* =====================================================
-            FALLBACK
-        ===================================================== */}
-
-        <Route
-          path="*"
-          element={
-            <Navigate
-              to="/dashboard/perfil"
-              replace
-            />
-          }
-        />
-
+        {/* FALLBACK */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/funcionarios" element={<Navigate to="/dashboard/funcionarios" replace />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
-export default App;
+export default AppRoutes;

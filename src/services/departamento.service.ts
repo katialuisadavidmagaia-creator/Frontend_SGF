@@ -1,57 +1,65 @@
 import { api } from './api';
-import {CriarDepartamentoPayload,Departamento,EditarDepartamentoPayload,} from '../types/departamento.types';
+import {
+  Departamento,
+  CriarDepartamentoPayload,
+  EditarDepartamentoPayload,
+} from '../types/departamento.types';
 
 export const departamentoService = {
   async listarDepartamentos(): Promise<Departamento[]> {
-  const response = await api.get('/departamentos');
-  
-  console.log('--- DIAGNÓSTICO DA API ---');
-  console.log('Status HTTP:', response.status);
-  console.log('Dados recebidos:', response.data);
-  console.log('É Array?:', Array.isArray(response.data));
-  
-  return Array.isArray(response.data) ? response.data : response.data?.data || [];
-},
-  // async listarDepartamentos(): Promise<Departamento[]> {
-  //   const response = await api.get('/departamentos');
-  //   const resData = response.data;
+    const { data } = await api.get('/departamentos');
 
-  //   if (Array.isArray(resData)) {
-  //     return resData;
-  //   }
+    if (Array.isArray(data)) {
+      return data;
+    }
 
-  //   if (resData && Array.isArray(resData.data)) {
-  //     return resData.data;
-  //   }
+    if (Array.isArray(data?.dados)) {
+      return data.dados;
+    }
 
-  //   if (resData && Array.isArray(resData.departamentos)) {
-  //     return resData.departamentos;
-  //   }
+    return [];
+  },
 
-  //   // Retorna array vazio caso venha nulo ou formato inesperado
-  //   return [];
-  // },
+  async obterDepartamentoPorId(
+    id: string | number
+  ): Promise<Departamento> {
+    const { data } = await api.get<Departamento>(
+      `/departamentos/${id}`
+    );
 
+    return data;
+  },
 
-  async criarDepartamento(payload: CriarDepartamentoPayload): Promise<Departamento> {
-    const { data } = await api.post<Departamento>('/departamentos', payload);
+  async criarDepartamento(
+    payload: CriarDepartamentoPayload
+  ): Promise<Departamento> {
+    const { data } = await api.post<Departamento>(
+      '/departamentos',
+      payload
+    );
+
     return data;
   },
 
   async editarDepartamento(
-    id: string,
+    id: string | number,
     payload: EditarDepartamentoPayload
   ): Promise<Departamento> {
-    const { data } = await api.put<Departamento>(`/departamentos/${id}`, payload);
+    const { data } = await api.put<Departamento>(
+      `/departamentos/${id}`,
+      payload
+    );
+
     return data;
   },
 
-  async eliminarDepartamento(id: string): Promise<void> {
-    await api.delete(`/departamentos/${id}`);
+  async desativarDepartamento(id: string | number): Promise<void> {
+    await api.patch(`/departamentos/${id}/desativar`);
+  },
+
+  // Alias para compatibilidade com chamadas existentes (ex: Departamentos.tsx).
+  // O backend não elimina de facto — faz soft delete (ativo: false).
+  async eliminarDepartamento(id: string | number): Promise<void> {
+    await this.desativarDepartamento(id);
   },
 };
-
-export const listarDepartamentos = departamentoService.listarDepartamentos;
-export const eliminarDepartamento = departamentoService.eliminarDepartamento;
-
-export default departamentoService;

@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { authService } from '../services/auth.service';
 import { LoginPayload, Utilizador } from '../types/auth.types';
-import { useTranslation } from 'react-i18next';
 
 interface AuthContextValue {
   utilizador: Utilizador | null;
@@ -14,7 +13,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const {t}=useTranslation();
+  
   const [utilizador, setUtilizador] = useState<Utilizador | null>(
     authService.getUtilizadorAtual()
   );
@@ -24,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setCarregando(true);
     try {
       const resposta = await authService.login(payload);
-      setUtilizador(resposta.funcionario ?? null);
+      setUtilizador(resposta.utilizador ?? null);
     } finally {
       setCarregando(false);
     }

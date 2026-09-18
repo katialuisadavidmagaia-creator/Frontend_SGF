@@ -1,0 +1,256 @@
+
+{
+
+
+"dashboard": {
+  "title": "Visão geral",
+  "description": "Acompanhe os principais indicadores, projetos, relatórios e tarefas do sistema.",
+
+  "statistics": {
+    "employees": "Funcionários",
+    "departments": "Departamentos",
+    "projects": "Projetos",
+    "reports": "Relatórios",
+    "tasks": "Tarefas"
+  },
+
+  "projectOverview": {
+    "title": "Visão geral dos projetos",
+    "description": "Distribuição dos projetos por estado.",
+    "empty": "Ainda não existem projetos registados."
+  },
+
+  "projectStatus": {
+    "PLANEADO": "Planeado",
+    "EM_ANDAMENTO": "Em andamento",
+    "CONCLUIDO": "Concluído",
+    "CANCELADO": "Cancelado"
+  },
+
+  "projectProgress": {
+    "title": "Progresso dos projetos",
+    "description": "Acompanhe o estado e o progresso geral dos projetos.",
+    "completedPercentage": "Projetos concluídos"
+  },
+
+  "reports": {
+    "title": "Resumo dos relatórios",
+    "description": "Acompanhe o estado dos relatórios registados no sistema.",
+    "pending": "Pendentes",
+    "approved": "Aprovados",
+    "rejected": "Rejeitados",
+    "completed": "Concluídos"
+  },
+
+  "tasks": {
+    "title": "Resumo das tarefas",
+    "description": "Acompanhe o estado das tarefas dos projetos.",
+    "pending": "Tarefas pendentes",
+    "pendingDescription": "Tarefas que aguardam início.",
+    "inProgress": "Em andamento",
+    "inProgressDescription": "Tarefas atualmente em execução.",
+    "completed": "Concluídas",
+    "completedDescription": "Tarefas que foram concluídas."
+  }
+},
+  "calendar": {
+    "title": "Calendário",
+    "description": "Acompanhe projetos, tarefas, relatórios, reuniões e eventos.",
+    "newEvent": "Novo evento",
+    "filters": {
+      "all": "Todos"
+    },
+    "types": {
+      "PROJETO": "Projetos",
+      "TASK": "Tarefas",
+      "RELATORIO": "Relatórios",
+      "REUNIAO": "Reuniões",
+      "EVENTO": "Eventos"
+    },
+    "fields": {
+      "title": "Título",
+      "type": "Tipo",
+      "date": "Data",
+      "time": "Hora",
+      "description": "Descrição"
+    },
+    "months": {
+      "january": "Janeiro",
+      "february": "Fevereiro",
+      "march": "Março",
+      "april": "Abril",
+      "may": "Maio",
+      "june": "Junho",
+      "july": "Julho",
+      "august": "Agosto",
+      "september": "Setembro",
+      "october": "Outubro",
+      "november": "Novembro",
+      "december": "Dezembro"
+    },
+    "weekdays": {
+      "monday": "Seg",
+      "tuesday": "Ter",
+      "wednesday": "Qua",
+      "thursday": "Qui",
+      "friday": "Sex",
+      "saturday": "Sáb",
+      "sunday": "Dom"
+    }
+  },
+
+  "tasks": {
+    "title": "Tarefas",
+    "description": "Crie, acompanhe e gerencie as tarefas dos projetos e da equipa.",
+    "newTask": "Nova tarefa",
+    "editTask": "Editar tarefa",
+    "createDescription": "Crie uma nova tarefa e atribua-a a um responsável.",
+    "editDescription": "Atualize os dados e o estado desta tarefa.",
+    "statistics": {
+      "total": "Total de tarefas",
+      "pending": "Pendentes",
+      "inProgress": "Em andamento",
+      "completed": "Concluídas",
+      "overdue": "Atrasadas"
+    },
+    "search": "Pesquisar tarefas...",
+    "filters": {
+      "allStatuses": "Todos os estados",
+      "allPriorities": "Todas as prioridades"
+    },
+    "status": {
+      "PENDENTE": "Pendente",
+      "EM_ANDAMENTO": "Em andamento",
+      "CONCLUIDA": "Concluída",
+      "CANCELADA": "Cancelada"
+    },
+    "priority": {
+      "BAIXA": "Baixa",
+      "MEDIA": "Média",
+      "ALTA": "Alta"
+    },
+    "overdue": "Atrasada",
+    "project": "Projeto",
+    "responsible": "Responsável",
+    "startDate": "Data de início",
+    "deadline": "Prazo",
+    "fields": {
+      "title": "Título",
+      "titlePlaceholder": "Digite o título da tarefa",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Descreva a tarefa",
+      "status": "Estado",
+      "priority": "Prioridade",
+      "selectProject": "Selecione o projeto",
+      "selectResponsible": "Selecione o responsável",
+      "startDate": "Data de início",
+      "deadline": "Prazo"
+    },
+    "empty": "Nenhuma tarefa encontrada",
+    "emptyDescription": "Ainda não existem tarefas cadastradas.",
+    "emptySearch": "Nenhuma tarefa corresponde à sua pesquisa.",
+    "deleteConfirmation": "Tem certeza que deseja eliminar esta tarefa?",
+    "validation": {
+      "title": "Informe o título da tarefa."
+    },
+    "errors": {
+      "load": "Não foi possível carregar as tarefas.",
+      "save": "Não foi possível guardar a tarefa.",
+      "delete": "Não foi possível eliminar a tarefa."
+    }
+  },
+
+  "users": {
+    "title": "Usuários",
+    "description": "Gerencie as contas de acesso, funções e permissões do sistema.",
+    "newUser": "Novo usuário",
+    "editUser": "Editar usuário",
+    "editDescription": "Atualize os dados e o nível de acesso deste usuário.",
+    "createDescription": "Crie uma nova conta de acesso ao sistema.",
+    "listTitle": "Lista de usuários",
+    "results": "resultado(s)",
+    "search": "Pesquisar por nome, email ou função...",
+    "user": "Usuário",
+    "email": "Email",
+    "role": "Função",
+    "employee": "Funcionário",
+    "empty": "Nenhum usuário encontrado",
+    "emptySearch": "Tente alterar os termos da pesquisa.",
+    "emptyDescription": "Ainda não existem usuários cadastrados.",
+    "deleteConfirmation": "Tem certeza que deseja eliminar o usuário",
+    "statistics": {
+      "total": "Total de usuários",
+      "admins": "Administradores",
+      "hr": "Recursos Humanos",
+      "employees": "Funcionários"
+    },
+    "roles": {
+      "admin": "Administrador",
+      "hr": "Recursos Humanos",
+      "employee": "Funcionário"
+    },
+    "fields": {
+      "name": "Nome completo",
+      "namePlaceholder": "Digite o nome completo",
+      "email": "Email",
+      "emailPlaceholder": "Digite o email",
+      "password": "Palavra-passe",
+      "passwordPlaceholder": "Digite a palavra-passe",
+      "passwordOptional": "Deixe vazio para manter a atual",
+      "role": "Função"
+    },
+    "validation": {
+      "name": "Informe o nome do usuário.",
+      "email": "Informe o email do usuário.",
+      "password": "Informe a palavra-passe."
+    },
+    "errors": {
+      "save": "Não foi possível guardar o usuário.",
+      "delete": "Não foi possível eliminar o usuário."
+    }
+  },
+
+  "members": {
+    "title": "Membros",
+    "description": "Visualize os membros e colaboradores da organização.",
+    "team": "Equipa",
+    "members": "membros",
+    "search": "Pesquisar membro...",
+    "empty": "Nenhum membro encontrado."
+  },
+
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "loading": "A carregar..."
+  },
+
+  "settings": {
+    "title": "Configurações",
+    "description": "Personalize as preferências da sua conta e da aplicação.",
+    "language": {
+      "title": "Idioma",
+      "description": "Escolha o idioma da aplicação.",
+      "portuguese": "Português",
+      "english": "Inglês"
+    },
+    "appearance": {
+      "title": "Aparência",
+      "description": "Escolha como a aplicação deve ser apresentada.",
+      "light": "Claro",
+      "dark": "Escuro",
+      "system": "Sistema"
+    },
+    "notifications": {
+      "title": "Notificações",
+      "description": "Configure as notificações da aplicação.",
+      "enable": "Ativar notificações"
+    },
+    "security": {
+      "title": "Segurança",
+      "description": "Gerencie a segurança da sua conta.",
+      "changePassword": "Alterar palavra-passe"
+    }
+  }
+}

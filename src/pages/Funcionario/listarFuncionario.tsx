@@ -1,47 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import DataTable, { IconEdit, IconEye, IconTrash, type Action, type Column, type FilterConfig } from '../../components/dataTable';
+import { Funcionario } from 'src/types/funcionario.types';
 
 const API = 'http://localhost:4003/api';
-
-interface Funcionario {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  departamento: string; 
-  criadoEm: string;
-}
-
-const columns: Column<Funcionario>[] = [
-  { key: 'id', label: 'ID' },
-  { key: 'name', label: 'Name' },                 
-  { key: 'email', label: 'Email' },
-  { key: 'departamento', label: 'Departamento' },  
-  {
-    key: 'criado_em',
-    label: 'Criado em',
-    render: (row: Funcionario) => row.criadoEm ? new Date(row.criadoEm).toLocaleDateString('pt-PT') : '-',
-  },
-];
-
-const filterConfig: FilterConfig<Funcionario>[] = [
-  {
-    key: 'departamento',
-    title: 'Departamento',
-    label: 'Departamento', 
-    value: '',
-    placeholder: 'Filtrar por Departamento',
-    options: [
-      { label: 'direcao geral', value: 'direcao geral' },
-      { label: 'Tecnologia e sistemas', value: 'Tecnologia e sistemas' },
-      { label: 'Financas e contabilidade', value: 'Financas e contabilidade' },
-      { label: 'Marketing e comunicacao', value: 'Marketing e comunicacao' },
-      { label: 'Projetos e inovacao', value: 'Projetos e inovacao' }, 
-      { label: 'Operacoes', value: 'Operacoes' },
-    ],
-  },
-];
 
 const FuncionariosIcon = () => (
   <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -54,6 +16,7 @@ const FuncionariosIcon = () => (
 
 export default function ListarFuncionario() {
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
+  const [departamentosOptions, setDepartamentosOptions] = useState<{ label: string; value: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
@@ -63,30 +26,98 @@ export default function ListarFuncionario() {
   const [selectedFuncionario, setSelectedFuncionario] = useState<Funcionario | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  // Definição das Colunas
+  const columns: Column<Funcionario>[] = useMemo(() => [
+    { key: 'id', label: 'ID' },
+    { key: 'name', label: 'Nome' }, 
+    { key: 'email', label: 'Email' },
+    { 
+      key: 'departamento', 
+      label: 'Departamento',
+      render: (row: Funcionario) => {
+        if (typeof row.departamento === 'object' && row.departamento !== null) {
+          return (row.departamento as any).nome || (row.departamento as any).name || 'Sem Departamento';
+        }
+        return row.departamento || 'Sem Departamento';
+      }
+    },  
+    {
+      key: 'criadoEm',
+      label: 'Criado em',
+      render: (row: Funcionario) => row.criadoEm ? new Date(row.criadoEm).toLocaleDateString('pt-PT') : '-',
+    },
+  ], []);
+
   useEffect(() => {
+    let isMounted = true;
     const token = localStorage.getItem('token');
-    fetch(`${API}/funcionarios`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
+
+    // Se não houver token, encerra o loading e redireciona
+    if (!token) {
+      console.error("Token não encontrado no localStorage!");
+      setError("Sessão expirada. Por favor, faça login novamente.");
+      setIsLoading(false);
+      navigate('/login');
+      return;
+    }
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    };
+
+    Promise.all([
+      fetch(`${API}/funcionarios`, { headers }).then(res => {
         if (!res.ok) throw new Error('Erro ao carregar funcionários.');
         return res.json();
+      }),
+      fetch(`${API}/departamentos`, { headers }).then(res => {
+        if (!res.ok) throw new Error('Erro ao carregar departamentos.');
+        return res.json();
       })
-      .then((json) => {
-        console.log("Dados recebidos da API :", json);
-        const dataArray = Array.isArray(json.data) ? json.data : (Array.isArray(json) ? json : []);
-        setFuncionarios(dataArray);
+    ])
+      .then(([jsonFuncionarios, jsonDepartamentos]) => {
+        if (!isMounted) return;
+
+        const dataFuncs = Array.isArray(jsonFuncionarios.data) 
+          ? jsonFuncionarios.data 
+          : (Array.isArray(jsonFuncionarios) ? jsonFuncionarios : []);
+        setFuncionarios(dataFuncs);
+
+        const dataDeps = Array.isArray(jsonDepartamentos.data) 
+          ? jsonDepartamentos.data 
+          : (Array.isArray(jsonDepartamentos) ? jsonDepartamentos : []);
+        
+        const options = dataDeps.map((dep: { id: string; nome: string }) => ({
+          label: dep.nome,
+          value: dep.nome,
+        }));
+        setDepartamentosOptions(options);
+
         setIsLoading(false);
       })
       .catch((err) => {
-        console.error("Erro ao procurar funcionários:", err);
+        if (!isMounted) return;
+        console.error("Erro no carregamento:", err);
         setError(err.message);
         setIsLoading(false);
       });
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [navigate]);
+
+  const filterConfig: FilterConfig<Funcionario>[] = useMemo(() => [
+    {
+      key: 'departamento',
+      title: 'Departamento',
+      label: 'Departamento', 
+      value: '',
+      placeholder: 'Filtrar por Departamento',
+      options: departamentosOptions,
+    },
+  ], [departamentosOptions]);
 
   const openDeleteDialog = (funcionario: Funcionario) => {
     setSelectedFuncionario(funcionario);
@@ -123,28 +154,28 @@ export default function ListarFuncionario() {
     }
   };
 
- const actions: Action<Funcionario>[] = [
-  {
-    icon: <IconEye />,
-    label: 'Visualizar',
-    onClick: (row) => {
-      navigate(`/dashboard/funcionarios/${row.id}`);
+  const actions: Action<Funcionario>[] = [
+    {
+      icon: <IconEye />,
+      label: 'Visualizar',
+      onClick: (row) => {
+        navigate(`/dashboard/funcionarios/${row.id}`);
+      },
     },
-  },
-  {
-    icon: <IconEdit />,
-    label: 'Editar',
-    onClick: (row) => {
-      navigate(`/dashboard/funcionarios/${row.id}/editar`);
+    {
+      icon: <IconEdit />,
+      label: 'Editar',
+      onClick: (row) => {
+        navigate(`/dashboard/funcionarios/${row.id}/editar`);
+      },
     },
-  },
-  {
-    icon: <IconTrash />,
-    label: 'Eliminar',
-    className: 'danger',
-    onClick: (row) => openDeleteDialog(row),
-  },
-];
+    {
+      icon: <IconTrash />,
+      label: 'Eliminar',
+      className: 'danger',
+      onClick: (row) => openDeleteDialog(row),
+    },
+  ];
 
   if (isLoading) return <p style={{ padding: '24px', fontFamily: 'sans-serif', color: '#666' }}>A carregar...</p>;
   if (error) return <p style={{ color: '#cc3333', padding: '24px', fontFamily: 'sans-serif' }}>{error}</p>;
@@ -160,7 +191,7 @@ export default function ListarFuncionario() {
         filters={filterConfig} 
         actions={actions}
         searchKeys={['name', 'email', 'departamento']}
-onNew={() => navigate('/dashboard/registar-funcionario')} 
+        onNew={() => navigate('/dashboard/funcionarios/novo')}
       />
 
       {/* Modal de Confirmação */}

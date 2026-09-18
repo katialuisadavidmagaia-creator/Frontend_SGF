@@ -1,6 +1,17 @@
 import { useState } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import {Users,FolderKanban,Building2,User,LogOut,ChevronLeft,ChevronRight,ChevronDown,FileText,CheckSquare,BarChart3,LayoutDashboard,UserCog,
+import { NavLink, useNavigate } from 'react-router-dom';
+import {
+  Users,LayoutDashboard,
+  FolderKanban,
+  Building2,
+  User,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  CheckSquare,
+  BarChart3,
+  UserCog,
   CalendarDays,
   UsersRound,
   ListTodo,
@@ -10,7 +21,6 @@ import { Button } from '../components/ui/button';
 import { usePermissoes } from '../hooks/usePermissoes';
 import { Role } from 'src/types/auth.types';
 import { useTranslation } from 'react-i18next';
-
 
 interface ItemNav {
   label: string;
@@ -26,16 +36,11 @@ function temAcesso(apenas: readonly Role[] | Role[] | undefined, role: Role | nu
 }
 
 export function Sidebar() {
-
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const location = useLocation();
   const { role } = usePermissoes();
 
   const [aberta, setAberta] = useState(true);
-  const [dashboardExpandida, setDashboardExpandida] = useState(
-    location.pathname.startsWith('/dashboard')
-  );
 
   const email = localStorage.getItem('email') || 'Utilizador';
 
@@ -45,9 +50,14 @@ export function Sidebar() {
     navigate('/login');
   };
 
-  // ---- Sub-itens do grupo "Dashboard" ----
+  // ---- Itens da Dashboard ----
   const itensDashboard: ItemNav[] = [
-    { label: 'Perfil', path: '/dashboard/perfil', icon: User },
+    {
+      label: 'Dashboard',
+      path: '/dashboard',
+      icon: LayoutDashboard,
+      apenas: ['ADMIN', 'RH'] as const,
+    },
     {
       label: 'Os meus relatórios',
       path: '/dashboard/meus-relatorios',
@@ -101,11 +111,9 @@ export function Sidebar() {
     { label: 'Settings', path: '/settings', icon: Settings },
   ].filter((item) => temAcesso(item.apenas, role));
 
-  const dashboardAtiva = location.pathname.startsWith('/dashboard');
-
   return (
     <aside
-      className={`bg-[#0E1A2B] min-h-screen transition-all duration-300 flex flex-col justify-between p-4 ${
+      className={`bg-[#0B132B] min-h-screen transition-all duration-300 flex flex-col justify-between p-4 ${
         aberta ? 'w-64' : 'w-20'
       }`}
     >
@@ -128,60 +136,32 @@ export function Sidebar() {
         </div>
 
         <nav className="flex flex-col gap-1">
-          {/* ---------- Grupo Dashboard ---------- */}
-          <button
-            onClick={() => {
-              if (!aberta) setAberta(true);
-              setDashboardExpandida((v) => !v);
-            }}
-            className={`flex items-center gap-3 w-full rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-              !aberta ? 'justify-center px-2' : ''
-            } ${
-              dashboardAtiva
-                ? 'bg-[#4F6EF7] text-white'
-                : 'text-white/70 hover:bg-white/10 hover:text-white'
-            }`}
-          >
-            <LayoutDashboard className="h-5 w-5 shrink-0" />
-            {aberta && (
-              <>
-                <span className="flex-1 text-left">Dashboard</span>
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform ${
-                    dashboardExpandida ? 'rotate-180' : ''
-                  }`}
-                />
-              </>
-            )}
-          </button>
-
-          {aberta && dashboardExpandida && (
-            <div className="ml-3 pl-3 border-l border-white/10 flex flex-col gap-0.5 my-1">
-              {itensDashboard.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <NavLink key={item.path} to={item.path}>
-                    {({ isActive }) => (
-                      <div
-                        className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
-                          isActive
-                            ? 'bg-[#4F6EF7]/20 text-[#8FA4FF] font-semibold'
-                            : 'text-white/60 hover:bg-white/10 hover:text-white'
-                        }`}
-                      >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span>{item.label}</span>
-                      </div>
-                    )}
-                  </NavLink>
-                );
-              })}
-            </div>
-          )}
+          {/* ---------- Lista Direta de Itens da Dashboard ---------- */}
+          {itensDashboard.map((item) => {
+            const Icon = item.icon;
+            return (
+              <NavLink key={item.path} to={item.path} end={item.path === '/dashboard'}>
+                {({ isActive }) => (
+                  <div
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                      !aberta ? 'justify-center px-2' : ''
+                    } ${
+                      isActive
+                        ? 'bg-[#1E2942] text-white shadow-sm'
+                        : 'text-slate-300 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5 shrink-0" />
+                    {aberta && <span>{item.label}</span>}
+                  </div>
+                )}
+              </NavLink>
+            );
+          })}
 
           <div className="h-px bg-white/10 my-3" />
 
-          {/* ---------- Itens de topo ---------- */}
+          {/* ---------- Itens Gerais ---------- */}
           {itensTopo.map((item) => {
             const Icon = item.icon;
             return (
@@ -192,8 +172,8 @@ export function Sidebar() {
                       !aberta ? 'justify-center px-2' : ''
                     } ${
                       isActive
-                        ? 'bg-[#4F6EF7] text-white'
-                        : 'text-white/70 hover:bg-white/10 hover:text-white'
+                        ? 'bg-[#5B73F7] text-white'
+                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
                     }`}
                   >
                     <Icon className="h-5 w-5 shrink-0" />
@@ -227,3 +207,5 @@ export function Sidebar() {
     </aside>
   );
 }
+
+export default Sidebar;

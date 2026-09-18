@@ -4,18 +4,18 @@ const {t}=useTranslation();
 
 export type Role = 'ADMIN' | 'RH' | 'FUNCIONARIO';
 
-export interface Utilizador {
-  id: string;
-  nome: string;
-  email: string;
-  role: Role;
-}
-
 export interface LoginPayload {
   email: string;
-  password: string;
+  senha: string;
 }
 
+export interface Utilizador {
+  id: number;
+  nome: string;
+  email: string;
+  role: string;
+  [key: string]: any;
+}
 export interface LoginResponse {
   token: string;
   refreshToken?: string;

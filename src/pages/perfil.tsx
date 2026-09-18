@@ -28,7 +28,7 @@ interface PerfilCompleto {
   name: string;
   email: string;
   cargo?: string;
-  departamento?: { id: number; nome: string };
+  departamentos?: { id: number; nome: string };
   gestorDireto?: string;
   localizacao?: string; // Ex: Lisboa - Edifício A (Híbrido)
   idiomas?: string[];
@@ -214,7 +214,7 @@ export default function Perfil() {
                 <CartaoInfo
                   icon={<Building2 className="h-4 w-4" />}
                   label="Departamento"
-                  valor={perfil.departamento?.nome ?? 'Não atribuído'}
+                  valor={perfil.departamentos?.nome ?? 'Não atribuído'}
                 />
 
                 <CartaoInfo

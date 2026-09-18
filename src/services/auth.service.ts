@@ -1,21 +1,31 @@
 import { api } from './api';
-import {LoginPayload,RecuperarPasswordPayload,RedefinirPasswordPayload,Utilizador,} from '../types/auth.types';
-
+import {
+  LoginPayload,
+  RecuperarPasswordPayload,
+  RedefinirPasswordPayload,
+  Utilizador,
+} from '../types/auth.types';
 
 export interface LoginResponse {
-  sucesso: boolean;
+  sucesso?: boolean;
   token: string;
-  funcionario: Utilizador;
-  utilizador?: Utilizador; 
+  utilizador: Utilizador;
 }
 
 export const authService = {
   async login(payload: LoginPayload): Promise<LoginResponse> {
-    
+    console.trace('LOGIN CHAMADO COM:', payload);
+
     const { data } = await api.post<LoginResponse>('/login', payload);
+
     localStorage.setItem('token', data.token);
-    localStorage.setItem('utilizador', JSON.stringify(data.funcionario));
-    return { ...data, utilizador: data.funcionario };
+
+    localStorage.setItem(
+      'utilizador',
+      JSON.stringify(data.utilizador)
+    );
+
+    return data;
   },
 
   logout(): void {
@@ -24,24 +34,33 @@ export const authService = {
     window.location.href = '/login';
   },
 
-  async recuperarPassword(payload: RecuperarPasswordPayload): Promise<{ mensagem: string }> {
+  async recuperarPassword(
+    payload: RecuperarPasswordPayload
+  ): Promise<{ mensagem: string }> {
     const { data } = await api.post('/recuperar-password', payload);
     return data;
   },
 
-  async redefinirPassword(payload: RedefinirPasswordPayload): Promise<{ mensagem: string }> {
+  async redefinirPassword(
+    payload: RedefinirPasswordPayload
+  ): Promise<{ mensagem: string }> {
     const { data } = await api.post('/redefinir-password', payload);
     return data;
   },
 
-  async validarTokenRecuperacao(token: string): Promise<{ valido: boolean }> {
+  async validarTokenRecuperacao(
+    token: string
+  ): Promise<{ valido: boolean }> {
     const { data } = await api.get(`/validar-token/${token}`);
     return data;
   },
 
   getUtilizadorAtual(): Utilizador | null {
     const raw = localStorage.getItem('utilizador');
-    if (!raw || raw === 'undefined' || raw === 'null') return null;
+
+    if (!raw || raw === 'undefined' || raw === 'null') {
+      return null;
+    }
 
     try {
       return JSON.parse(raw) as Utilizador;

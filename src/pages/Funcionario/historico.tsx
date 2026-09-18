@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import styles from './components.module.css';
-import { useTranslation } from 'react-i18next';
 
 const API = 'http://localhost:4003/api';
 
@@ -15,7 +14,7 @@ interface Registo {
 }
 
 export default function Historico() {
-  const {t}=useTranslation();
+  
   const [registos, setRegistos] = useState<Registo[]>([]);
   const [loading, setLoading]   = useState(true);
   const [erro, setErro]         = useState('');
