@@ -1,39 +1,30 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
-
-// Públicas
 import LandingPage from './pages/landingPage';
 import Login from './pages/auth/login';
 import Registo from './pages/auth/registo';
 import Recuperar from './pages/auth/recuperarPassword';
 import RedefinirPassword from './pages/auth/redefinirpassword';
-
-// Layout / Proteção
 import DashboardLayout from './components/layout/dashboardLayout';
 import { ProtectedRoute } from './routes/protectedRoutes';
-
-// Páginas
 import Dashboard from './pages/dashboard';
 import Perfil from './pages/perfil';
-
 import PerfilFuncionario from './pages/Funcionario/perfil';
 import ListarFuncionario from './pages/Funcionario/listarFuncionario';
 import DetalhesFuncionario from './pages/Funcionario/detalhesFuncionario';
 import EditarFuncionario from './pages/Funcionario/editarFuncionario';
 import { Departamentos } from './pages/departamento';
 import Projetos from './pages/Projetos';
-
 import Relatorios from './pages/relatorios';
 import MeusRelatorios from './pages/dashboard/meusRelatorios'; 
 import Aprovacoes from './pages/dashboard/aprovacoes';
 import Estatisticas from './pages/dashboard/estatisticas';
-
 import Calendario from './pages/topo/calendario';
 import Usuarios from './pages/topo/usuarios';
 import Tasks from './pages/topo/tasks';
 import Settings from './pages/topo/settings';
 import Membros from './pages/topo/membros';
-
+import { MeusProjetos } from './pages/Projetos/meusProjetos';
 import AcessoNegado from './pages/acessoNegado';
 
 export function AppRoutes() {
@@ -76,6 +67,9 @@ export function AppRoutes() {
               <Route path="/dashboard/estatisticas" element={<Estatisticas />} />
               <Route path="/usuarios" element={<Usuarios />} />
             </Route>
+
+            // Dentro das suas rotas protegidas para funcionários:
+            <Route path="/meus-projetos" element={<MeusProjetos />} />
 
             {/* FUNCIONÁRIO NORMAL */}
             <Route element={<ProtectedRoute permitido={['FUNCIONARIO']} />}>

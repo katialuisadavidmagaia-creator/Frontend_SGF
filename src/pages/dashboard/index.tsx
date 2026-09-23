@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle,
@@ -23,6 +24,7 @@ import { api } from '../../services/api';
 
 interface Funcionario {
   id: number;
+  nome?: string;
   name?: string;
   email?: string;
 }
@@ -36,6 +38,7 @@ interface Projeto {
   id: number;
   nome?: string;
   estado?: string;
+  status?: string;
   dataInicio?: string;
   dataFim?: string;
 }
@@ -44,6 +47,7 @@ interface Relatorio {
   id: number;
   titulo?: string;
   estado?: string;
+  status?: string;
   createdAt?: string;
   dataCriacao?: string;
 }
@@ -52,6 +56,7 @@ interface Task {
   id: number;
   titulo?: string;
   estado?: string;
+  status?: string;
   prazo?: string;
 }
 
@@ -68,7 +73,7 @@ const ESTADOS_PROJETO = [
   'EM_ANDAMENTO',
   'CONCLUIDO',
   'CANCELADO',
-];
+] as const;
 
 const CORES_PROJETO: Record<string, string> = {
   PLANEADO: '#6366F1',
@@ -76,6 +81,42 @@ const CORES_PROJETO: Record<string, string> = {
   CONCLUIDO: '#10B981',
   CANCELADO: '#EF4444',
 };
+
+function extrairArray<T>(resposta: any, chave?: string): T[] {
+  const data = resposta?.data;
+
+  // Caso a API devolva diretamente:
+  // { data: [...] }
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  // Caso devolva:
+  // { data: { data: [...] } }
+  if (Array.isArray(data?.data)) {
+    return data.data;
+  }
+
+  // Caso devolva:
+  // { data: { dados: [...] } }
+  if (Array.isArray(data?.dados)) {
+    return data.dados;
+  }
+
+  // Caso devolva:
+  // { data: { dados: { funcionarios: [...] } } }
+  if (chave && Array.isArray(data?.dados?.[chave])) {
+    return data.dados[chave];
+  }
+
+  // Caso devolva:
+  // { data: { funcionarios: [...] } }
+  if (chave && Array.isArray(data?.[chave])) {
+    return data[chave];
+  }
+
+  return [];
+}
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -91,123 +132,121 @@ export default function Dashboard() {
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
+    let ativo = true;
+
+    const carregarDashboard = async () => {
+      try {
+        setCarregando(true);
+
+        const resultados = await Promise.allSettled([
+          api.get('/funcionarios'),
+          api.get('/departamentos'),
+          api.get('/projetos'),
+          api.get('/relatorios'),
+          api.get('/tasks'),
+        ]);
+
+        if (!ativo) return;
+
+        const funcionarios =
+          resultados[0].status === 'fulfilled'
+            ? extrairArray<Funcionario>(
+                resultados[0].value,
+                'funcionarios'
+              )
+            : [];
+
+        const departamentos =
+          resultados[1].status === 'fulfilled'
+            ? extrairArray<Departamento>(
+                resultados[1].value,
+                'departamentos'
+              )
+            : [];
+
+        const projetos =
+          resultados[2].status === 'fulfilled'
+            ? extrairArray<Projeto>(
+                resultados[2].value,
+                'projetos'
+              )
+            : [];
+
+        const relatorios =
+          resultados[3].status === 'fulfilled'
+            ? extrairArray<Relatorio>(
+                resultados[3].value,
+                'relatorios'
+              )
+            : [];
+
+        const tasks =
+          resultados[4].status === 'fulfilled'
+            ? extrairArray<Task>(
+                resultados[4].value,
+                'tasks'
+              )
+            : [];
+
+        console.log('[Dashboard] Funcionários:', funcionarios);
+        console.log('[Dashboard] Departamentos:', departamentos);
+        console.log('[Dashboard] Projetos:', projetos);
+        console.log('[Dashboard] Relatórios:', relatorios);
+        console.log('[Dashboard] Tasks:', tasks);
+
+        setDados({
+          funcionarios: Array.isArray(funcionarios)
+            ? funcionarios
+            : [],
+          departamentos: Array.isArray(departamentos)
+            ? departamentos
+            : [],
+          projetos: Array.isArray(projetos)
+            ? projetos
+            : [],
+          relatorios: Array.isArray(relatorios)
+            ? relatorios
+            : [],
+          tasks: Array.isArray(tasks)
+            ? tasks
+            : [],
+        });
+      } catch (erro) {
+        console.error(
+          '[Dashboard] Erro ao carregar dados:',
+          erro
+        );
+      } finally {
+        if (ativo) {
+          setCarregando(false);
+        }
+      }
+    };
+
     carregarDashboard();
+
+    return () => {
+      ativo = false;
+    };
   }, []);
 
-const extrairLista = <T,>(resposta: any): T[] => {
-  const dados = resposta?.data;
+  const obterEstadoProjeto = (projeto: Projeto) => {
+    return projeto.estado || projeto.status || '';
+  };
 
-  if (Array.isArray(dados)) {
-    return dados;
-  }
+  const obterEstadoRelatorio = (relatorio: Relatorio) => {
+    return relatorio.estado || relatorio.status || '';
+  };
 
-  if (Array.isArray(dados?.data)) {
-    return dados.data;
-  }
-
-  if (Array.isArray(dados?.dados)) {
-    return dados.dados;
-  }
-
-  if (Array.isArray(dados?.dados?.funcionarios)) {
-    return dados.dados.funcionarios;
-  }
-
-  if (Array.isArray(dados?.dados?.departamentos)) {
-    return dados.dados.departamentos;
-  }
-
-  if (Array.isArray(dados?.dados?.projetos)) {
-    return dados.dados.projetos;
-  }
-
-  if (Array.isArray(dados?.dados?.relatorios)) {
-    return dados.dados.relatorios;
-  }
-
-  if (Array.isArray(dados?.dados?.tasks)) {
-    return dados.dados.tasks;
-  }
-
-  if (Array.isArray(dados?.funcionarios)) {
-    return dados.funcionarios;
-  }
-
-  if (Array.isArray(dados?.departamentos)) {
-    return dados.departamentos;
-  }
-
-  if (Array.isArray(dados?.projetos)) {
-    return dados.projetos;
-  }
-
-  if (Array.isArray(dados?.relatorios)) {
-    return dados.relatorios;
-  }
-
-  if (Array.isArray(dados?.tasks)) {
-    return dados.tasks;
-  }
-
-  return [];
-};
-
-  const carregarDashboard = async () => {
-    try {
-      setCarregando(true);
-
-      const resultados = await Promise.allSettled([
-        api.get('/funcionarios'),
-        api.get('/departamentos'),
-        api.get('/projetos'),
-        api.get('/relatorios'),
-        api.get('/tasks'),
-      ]);
-
-      const funcionarios =
-        resultados[0].status === 'fulfilled'
-          ? extrairLista<Funcionario>(resultados[0].value)
-          : [];
-
-      const departamentos =
-        resultados[1].status === 'fulfilled'
-          ? extrairLista<Departamento>(resultados[1].value)
-          : [];
-
-      const projetos =
-        resultados[2].status === 'fulfilled'
-          ? extrairLista<Projeto>(resultados[2].value)
-          : [];
-
-      const relatorios =
-        resultados[3].status === 'fulfilled'
-          ? extrairLista<Relatorio>(resultados[3].value)
-          : [];
-
-      const tasks =
-        resultados[4].status === 'fulfilled'
-          ? extrairLista<Task>(resultados[4].value)
-          : [];
-
-      setDados({
-        funcionarios,
-        departamentos,
-        projetos,
-        relatorios,
-        tasks,
-      });
-    } catch (erro) {
-      console.error('Erro ao carregar dashboard:', erro);
-    } finally {
-      setCarregando(false);
-    }
+  const obterEstadoTask = (task: Task) => {
+    return task.estado || task.status || '';
   };
 
   const projetosPorEstado = useMemo(() => {
     return ESTADOS_PROJETO.map((estado) => ({
       nome: t(`dashboard.projectStatus.${estado}`),
       quantidade: dados.projetos.filter(
-        (projeto) => projeto.estado === estado
+        (projeto) => obterEstadoProjeto(projeto) === estado
       ).length,
       estado,
     }));
@@ -216,48 +255,65 @@ const extrairLista = <T,>(resposta: any): T[] => {
   const totalProjetos = dados.projetos.length;
 
   const projetosConcluidos = dados.projetos.filter(
-    (projeto) => projeto.estado === 'CONCLUIDO'
+    (projeto) =>
+      obterEstadoProjeto(projeto) === 'CONCLUIDO'
   ).length;
 
   const projetosEmAndamento = dados.projetos.filter(
-    (projeto) => projeto.estado === 'EM_ANDAMENTO'
+    (projeto) =>
+      obterEstadoProjeto(projeto) === 'EM_ANDAMENTO'
   ).length;
 
   const projetosCancelados = dados.projetos.filter(
-    (projeto) => projeto.estado === 'CANCELADO'
+    (projeto) =>
+      obterEstadoProjeto(projeto) === 'CANCELADO'
+  ).length;
+
+  const projetosPlaneados = dados.projetos.filter(
+    (projeto) =>
+      obterEstadoProjeto(projeto) === 'PLANEADO'
   ).length;
 
   const progressoProjetos =
     totalProjetos > 0
-      ? Math.round((projetosConcluidos / totalProjetos) * 100)
+      ? Math.round(
+          (projetosConcluidos / totalProjetos) * 100
+        )
       : 0;
 
   const relatoriosPendentes = dados.relatorios.filter(
-    (relatorio) => relatorio.estado === 'PENDENTE'
+    (relatorio) =>
+      obterEstadoRelatorio(relatorio) === 'PENDENTE'
   ).length;
 
   const relatoriosAprovados = dados.relatorios.filter(
-    (relatorio) => relatorio.estado === 'APROVADO'
+    (relatorio) =>
+      obterEstadoRelatorio(relatorio) === 'APROVADO'
   ).length;
 
   const relatoriosRejeitados = dados.relatorios.filter(
-    (relatorio) => relatorio.estado === 'REJEITADO'
+    (relatorio) =>
+      obterEstadoRelatorio(relatorio) === 'REJEITADO'
   ).length;
 
   const relatoriosConcluidos = dados.relatorios.filter(
-    (relatorio) => relatorio.estado === 'CONCLUIDO'
+    (relatorio) =>
+      obterEstadoRelatorio(relatorio) === 'CONCLUIDO'
   ).length;
 
   const tarefasConcluidas = dados.tasks.filter(
-    (task) => task.estado === 'CONCLUIDA'
+    (task) =>
+      obterEstadoTask(task) === 'CONCLUIDA'
   ).length;
 
   const tarefasPendentes = dados.tasks.filter(
-    (task) => task.estado === 'PENDENTE'
+    (task) =>
+      obterEstadoTask(task) === 'PENDENTE'
   ).length;
 
   const tarefasAndamento = dados.tasks.filter(
-    (task) => task.estado === 'EM_ANDAMENTO'
+    (task) =>
+      obterEstadoTask(task) === 'EM_ANDAMENTO'
   ).length;
 
   const obterPercentagem = (
@@ -300,7 +356,9 @@ const extrairLista = <T,>(resposta: any): T[] => {
               </p>
 
               <p className="mt-2 text-2xl font-bold text-slate-800">
-                {carregando ? '—' : dados.funcionarios.length}
+                {carregando
+                  ? '—'
+                  : dados.funcionarios.length}
               </p>
             </div>
 
@@ -318,7 +376,9 @@ const extrairLista = <T,>(resposta: any): T[] => {
               </p>
 
               <p className="mt-2 text-2xl font-bold text-slate-800">
-                {carregando ? '—' : dados.departamentos.length}
+                {carregando
+                  ? '—'
+                  : dados.departamentos.length}
               </p>
             </div>
 
@@ -354,7 +414,9 @@ const extrairLista = <T,>(resposta: any): T[] => {
               </p>
 
               <p className="mt-2 text-2xl font-bold text-slate-800">
-                {carregando ? '—' : dados.relatorios.length}
+                {carregando
+                  ? '—'
+                  : dados.relatorios.length}
               </p>
             </div>
 
@@ -385,7 +447,7 @@ const extrairLista = <T,>(resposta: any): T[] => {
 
       {/* Área principal */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        {/* Gráfico de pizza */}
+        {/* Gráfico */}
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="mb-4">
             <h2 className="font-semibold text-slate-800">
@@ -393,7 +455,9 @@ const extrairLista = <T,>(resposta: any): T[] => {
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              {t('dashboard.projectOverview.description')}
+              {t(
+                'dashboard.projectOverview.description'
+              )}
             </p>
           </div>
 
@@ -406,8 +470,11 @@ const extrairLista = <T,>(resposta: any): T[] => {
               </p>
             </div>
           ) : (
-            <div className="h-[320px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-[320px] w-full min-w-0">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+              >
                 <PieChart>
                   <Pie
                     data={projetosPorEstado}
@@ -418,13 +485,19 @@ const extrairLista = <T,>(resposta: any): T[] => {
                     innerRadius={65}
                     outerRadius={105}
                     paddingAngle={3}
+                    labelLine={false}
                   >
-                    {projetosPorEstado.map((item, index) => (
-                      <Cell
-                     key={`${item.estado}-${index}`}
-                     fill={CORES_PROJETO[item.estado] || '#94A3B8'}
-                         />
-                      ))}
+                    {projetosPorEstado.map(
+                      (item, index) => (
+                        <Cell
+                          key={`${item.estado}-${index}`}
+                          fill={
+                            CORES_PROJETO[item.estado] ||
+                            '#94A3B8'
+                          }
+                        />
+                      )
+                    )}
                   </Pie>
 
                   <Tooltip />
@@ -447,16 +520,22 @@ const extrairLista = <T,>(resposta: any): T[] => {
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
-              {t('dashboard.projectProgress.description')}
+              {t(
+                'dashboard.projectProgress.description'
+              )}
             </p>
           </div>
 
           <div className="space-y-5">
+            {/* Em andamento */}
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-2 text-sm text-slate-600">
                   <Clock3 className="h-4 w-4 text-indigo-500" />
-                  {t('dashboard.projectStatus.EM_ANDAMENTO')}
+
+                  {t(
+                    'dashboard.projectStatus.EM_ANDAMENTO'
+                  )}
                 </span>
 
                 <span className="font-semibold text-slate-800">
@@ -477,11 +556,15 @@ const extrairLista = <T,>(resposta: any): T[] => {
               </div>
             </div>
 
+            {/* Concluídos */}
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-2 text-sm text-slate-600">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                  {t('dashboard.projectStatus.CONCLUIDO')}
+
+                  {t(
+                    'dashboard.projectStatus.CONCLUIDO'
+                  )}
                 </span>
 
                 <span className="font-semibold text-slate-800">
@@ -502,11 +585,15 @@ const extrairLista = <T,>(resposta: any): T[] => {
               </div>
             </div>
 
+            {/* Cancelados */}
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <span className="flex items-center gap-2 text-sm text-slate-600">
                   <AlertCircle className="h-4 w-4 text-red-500" />
-                  {t('dashboard.projectStatus.CANCELADO')}
+
+                  {t(
+                    'dashboard.projectStatus.CANCELADO'
+                  )}
                 </span>
 
                 <span className="font-semibold text-slate-800">
@@ -526,6 +613,35 @@ const extrairLista = <T,>(resposta: any): T[] => {
                 />
               </div>
             </div>
+
+            {/* Planeados */}
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <span className="flex items-center gap-2 text-sm text-slate-600">
+                  <FolderKanban className="h-4 w-4 text-indigo-500" />
+
+                  {t(
+                    'dashboard.projectStatus.PLANEADO'
+                  )}
+                </span>
+
+                <span className="font-semibold text-slate-800">
+                  {projetosPlaneados}
+                </span>
+              </div>
+
+              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className="h-full rounded-full bg-indigo-500 transition-all"
+                  style={{
+                    width: `${obterPercentagem(
+                      projetosPlaneados,
+                      totalProjetos
+                    )}%`,
+                  }}
+                />
+              </div>
+            </div>
           </div>
 
           {/* Percentagem geral */}
@@ -533,7 +649,9 @@ const extrairLista = <T,>(resposta: any): T[] => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-slate-600">
-                  {t('dashboard.projectProgress.completedPercentage')}
+                  {t(
+                    'dashboard.projectProgress.completedPercentage'
+                  )}
                 </p>
 
                 <p className="mt-1 text-2xl font-bold text-slate-800">
@@ -619,6 +737,7 @@ const extrairLista = <T,>(resposta: any): T[] => {
           </div>
 
           <div className="space-y-4">
+            {/* Pendentes */}
             <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50">
@@ -631,7 +750,9 @@ const extrairLista = <T,>(resposta: any): T[] => {
                   </p>
 
                   <p className="text-xs text-slate-400">
-                    {t('dashboard.tasks.pendingDescription')}
+                    {t(
+                      'dashboard.tasks.pendingDescription'
+                    )}
                   </p>
                 </div>
               </div>
@@ -641,6 +762,7 @@ const extrairLista = <T,>(resposta: any): T[] => {
               </span>
             </div>
 
+            {/* Em andamento */}
             <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50">
@@ -653,7 +775,9 @@ const extrairLista = <T,>(resposta: any): T[] => {
                   </p>
 
                   <p className="text-xs text-slate-400">
-                    {t('dashboard.tasks.inProgressDescription')}
+                    {t(
+                      'dashboard.tasks.inProgressDescription'
+                    )}
                   </p>
                 </div>
               </div>
@@ -663,6 +787,7 @@ const extrairLista = <T,>(resposta: any): T[] => {
               </span>
             </div>
 
+            {/* Concluídas */}
             <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50">
@@ -675,7 +800,9 @@ const extrairLista = <T,>(resposta: any): T[] => {
                   </p>
 
                   <p className="text-xs text-slate-400">
-                    {t('dashboard.tasks.completedDescription')}
+                    {t(
+                      'dashboard.tasks.completedDescription'
+                    )}
                   </p>
                 </div>
               </div>

@@ -1,49 +1,42 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/authcontext';
-import { usePermissoes } from '../hooks/usePermissoes';
-import { ReactNode } from 'react';
-
-type Role = 'ADMIN' | 'RH' | 'FUNCIONARIO';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../context/authcontext'; // Ajuste o caminho se necessário
 
 interface ProtectedRouteProps {
-  modulo?: string;
-  accao?: 'ver' | 'criar' | 'editar' | 'eliminar';
-  children?: ReactNode;
-  permitido?: Role[];
+  permitido?: string[];
 }
 
-export function ProtectedRoute({ modulo, accao = 'ver', children, permitido }: ProtectedRouteProps) {
-  const { estaAutenticado } = useAuth();
-  const { pode, role } = usePermissoes();
-  const location = useLocation();
+export function ProtectedRoute({ permitido }: ProtectedRouteProps) {
+  const { utilizador } = useAuth();
 
-  console.log('[ProtectedRoute]', {
-    pathname: location.pathname,
+  // 1. Verifica token diretamente do localStorage para não depender apenas do estado do React
+  const token = localStorage.getItem('token');
+  const userStorage = localStorage.getItem('user');
+  const userLocal = userStorage ? JSON.parse(userStorage) : null;
+
+  const user = utilizador || userLocal;
+  const estaAutenticado = Boolean(token);
+
+  console.log('[ProtectedRoute] Check:', {
+    pathname: window.location.pathname,
     estaAutenticado,
-    role,
-    permitido,
-    modulo,
-    accao,
-    podeResultado: modulo ? pode(modulo, accao) : 'N/A',
+    user
   });
 
-  // 1. Tem de estar autenticado
   if (!estaAutenticado) {
-    console.log('[ProtectedRoute] → redirect /login (não autenticado)');
+    console.log('[ProtectedRoute] -> redirect /login (não autenticado)');
     return <Navigate to="/login" replace />;
   }
 
-  // 2. Verificação por role específica (usada em App.tsx: permitido={['ADMIN','RH']})
-  if (permitido && (!role || !permitido.includes(role as Role))) {
-    console.log('[ProtectedRoute] → redirect /acesso-negado (role não permitido)');
-    return <Navigate to="/acesso-negado" replace />;
+  if (permitido && permitido.length > 0) {
+    const userRole = user?.role || user?.tipo || user?.perfil;
+
+    if (!userRole || !permitido.includes(userRole)) {
+      console.log('[ProtectedRoute] -> redirect /acesso-negado');
+      return <Navigate to="/acesso-negado" replace />;
+    }
   }
 
-  // 3. Verificação por permissão de módulo/ação (RBAC granular)
-  if (modulo && !pode(modulo, accao)) {
-    console.log('[ProtectedRoute] → redirect /acesso-negado (sem permissão de módulo)');
-    return <Navigate to="/acesso-negado" replace />;
-  }
-
-  return children ? <>{children}</> : <Outlet />;
+  return <Outlet />;
 }
+
+export default ProtectedRoute;

@@ -1,44 +1,45 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import {
-  Users,LayoutDashboard,
-  FolderKanban,
-  Building2,
-  User,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-  FileText,
-  CheckSquare,
-  BarChart3,
-  UserCog,
-  CalendarDays,
-  UsersRound,
-  ListTodo,
-  Settings,
-} from 'lucide-react';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import {Users,LayoutDashboard,FolderKanban,Building2,LogOut,ChevronLeft,ChevronRight,FileText,CheckSquare,BarChart3,UserCog,CalendarDays,UsersRound,ListTodo,Settings,} from 'lucide-react';
+
 import { Button } from '../components/ui/button';
 import { usePermissoes } from '../hooks/usePermissoes';
 import { Role } from 'src/types/auth.types';
-import { useTranslation } from 'react-i18next';
+import type { LucideIcon } from 'lucide-react';
 
 interface ItemNav {
   label: string;
   path: string;
-  icon: typeof User;
+  icon: LucideIcon; // ✅ Mantido como LucideIcon
   apenas?: readonly Role[] | Role[];
 }
 
-function temAcesso(apenas: readonly Role[] | Role[] | undefined, role: Role | null | undefined): boolean {
+interface SeccaoNav {
+  titulo: string;
+  itens: ItemNav[];
+}
+
+function temAcesso(
+  apenas: readonly Role[] | Role[] | undefined,
+  role: Role | null | undefined
+): boolean {
   if (!apenas) return true;
   if (!role) return false;
+
   return (apenas as readonly Role[]).includes(role);
 }
 
 export function Sidebar() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { role } = usePermissoes();
+  const location = useLocation();
+  const { role: roleRaw } = usePermissoes();
+
+  const role: Role | null =
+    roleRaw === 'ADMIN' ||
+    roleRaw === 'RH' ||
+    roleRaw === 'FUNCIONARIO'
+      ? roleRaw
+      : null;
 
   const [aberta, setAberta] = useState(true);
 
@@ -47,160 +48,283 @@ export function Sidebar() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('email');
+    localStorage.removeItem('utilizador');
+
     navigate('/login');
   };
 
-  // ---- Itens da Dashboard ----
-  const itensDashboard: ItemNav[] = [
-    {
-      label: 'Dashboard',
-      path: '/dashboard',
-      icon: LayoutDashboard,
-      apenas: ['ADMIN', 'RH'] as const,
-    },
-    {
-      label: 'Os meus relatórios',
-      path: '/dashboard/meus-relatorios',
-      icon: FileText,
-      apenas: ['FUNCIONARIO'] as const,
-    },
-    {
-      label: 'Relatórios',
-      path: '/dashboard/relatorios',
-      icon: FileText,
-      apenas: ['ADMIN', 'RH'] as const,
-    },
-    {
-      label: 'Funcionários',
-      path: '/dashboard/funcionarios',
-      icon: Users,
-      apenas: ['ADMIN', 'RH'] as const,
-    },
-    {
-      label: 'Departamentos',
-      path: '/dashboard/departamentos',
-      icon: Building2,
-      apenas: ['ADMIN', 'RH'] as const,
-    },
-    {
-      label: 'Projetos',
-      path: '/dashboard/projetos',
-      icon: FolderKanban,
-      apenas: ['ADMIN', 'RH'] as const,
-    },
-    {
-      label: 'Aprovações',
-      path: '/dashboard/aprovacoes',
-      icon: CheckSquare,
-      apenas: ['ADMIN', 'RH'] as const,
-    },
-    {
-      label: 'Estatísticas',
-      path: '/dashboard/estatisticas',
-      icon: BarChart3,
-      apenas: ['ADMIN', 'RH'] as const,
-    },
-  ].filter((item) => temAcesso(item.apenas, role));
+  // =========================================================
+  // GRUPOS E SEÇÕES DE NAVEGAÇÃO
+  // =========================================================
 
-  // ---- Itens de topo (fora da Dashboard) ----
-  const itensTopo: ItemNav[] = [
-    { label: 'Usuários', path: '/usuarios', icon: UserCog, apenas: ['ADMIN'] as const },
-    { label: 'Calendário', path: '/calendario', icon: CalendarDays },
-    { label: 'Membros', path: '/membros', icon: UsersRound },
-    { label: 'Tasks', path: '/tasks', icon: ListTodo },
-    { label: 'Settings', path: '/settings', icon: Settings },
-  ].filter((item) => temAcesso(item.apenas, role));
+  const seccoesMenu: SeccaoNav[] = [
+    {
+      titulo: 'VISÃO GERAL',
+      itens: [
+        {
+          label: 'Visão Geral',
+          path: '/dashboard',
+          icon: LayoutDashboard,
+          apenas: ['ADMIN', 'RH'] as const,
+        },
+        {
+          label: 'Os meus relatórios',
+          path: '/dashboard/meus-relatorios',
+          icon: FileText,
+          apenas: ['FUNCIONARIO'] as const,
+        },
+        {
+          label: 'Os meus projetos',
+          path: '/meus-projetos',
+          icon: FolderKanban, // ✅ Corrigido: passada a referência do ícone FolderKanban
+          apenas: ['FUNCIONARIO'] as const, // Opcional: restringe apenas a funcionários se necessário
+        },
+        {
+          label: 'Estatísticas',
+          path: '/dashboard/estatisticas',
+          icon: BarChart3,
+          apenas: ['ADMIN', 'RH'] as const,
+        },
+        {
+          label: 'Relatórios',
+          path: '/dashboard/relatorios',
+          icon: FileText,
+          apenas: ['ADMIN', 'RH'] as const,
+        },
+      ],
+    },
+    {
+      titulo: 'GESTÃO',
+      itens: [
+        {
+          label: 'Funcionários',
+          path: '/dashboard/funcionarios',
+          icon: Users,
+          apenas: ['ADMIN', 'RH'] as const,
+        },
+        {
+          label: 'Departamentos',
+          path: '/dashboard/departamentos',
+          icon: Building2,
+          apenas: ['ADMIN', 'RH'] as const,
+        },
+        {
+          label: 'Usuários',
+          path: '/usuarios',
+          icon: UserCog,
+          apenas: ['ADMIN'] as const,
+        },
+        {
+          label: 'Membros',
+          path: '/membros',
+          icon: UsersRound,
+        },
+      ],
+    },
+    {
+      titulo: 'PROJETOS E TAREFAS',
+      itens: [
+        {
+          label: 'Projetos',
+          path: '/dashboard/projetos',
+          icon: FolderKanban,
+          apenas: ['ADMIN', 'RH'] as const,
+        },
+        {
+          label: 'Aprovações',
+          path: '/dashboard/aprovacoes',
+          icon: CheckSquare,
+          apenas: ['ADMIN', 'RH'] as const,
+        },
+        {
+          label: 'Tasks',
+          path: '/tasks',
+          icon: ListTodo,
+        },
+        {
+          label: 'Calendário',
+          path: '/calendario',
+          icon: CalendarDays,
+        },
+      ],
+    },
+    {
+      titulo: 'SISTEMA',
+      itens: [
+        {
+          label: 'Definições',
+          path: '/settings',
+          icon: Settings,
+        },
+      ],
+    },
+  ];
 
   return (
     <aside
-      className={`bg-[#0B132B] min-h-screen transition-all duration-300 flex flex-col justify-between p-4 ${
-        aberta ? 'w-64' : 'w-20'
-      }`}
+      className={`
+        bg-[#0B132B]
+        min-h-screen
+        h-screen
+        sticky
+        top-0
+        shrink-0
+        transition-all
+        duration-300
+        flex
+        flex-col
+        border-r
+        border-white/5
+        ${aberta ? 'w-64' : 'w-20'}
+      `}
     >
+      {/* =====================================================
+          CONTEÚDO PRINCIPAL DA SIDEBAR
+      ====================================================== */}
+
       <div className="flex-1 overflow-y-auto">
-        {/* Cabeçalho */}
-        <div className="flex items-center justify-between mb-6 px-1">
+
+        {/* ===================================================
+            CABEÇALHO
+        ==================================================== */}
+
+        <div
+          className={`
+            h-[86px]
+            flex
+            items-center
+            border-b
+            border-white/10
+            px-5
+            ${aberta ? 'justify-between' : 'justify-center'}
+          `}
+        >
           {aberta && (
-            <h1 className="text-xl font-bold tracking-tight text-white font-sora">
+            <h1 className="text-xl font-bold tracking-tight text-white">
               VERTICE
             </h1>
           )}
+
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setAberta(!aberta)}
-            className="h-8 w-8 ml-auto text-white/70 hover:text-white hover:bg-white/10"
+            className="
+              h-8
+              w-8
+              text-white/60
+              hover:text-white
+              hover:bg-white/10
+              shrink-0
+            "
           >
-            {aberta ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+            {aberta ? (
+              <ChevronLeft className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
           </Button>
         </div>
 
-        <nav className="flex flex-col gap-1">
-          {/* ---------- Lista Direta de Itens da Dashboard ---------- */}
-          {itensDashboard.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink key={item.path} to={item.path} end={item.path === '/dashboard'}>
-                {({ isActive }) => (
-                  <div
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                      !aberta ? 'justify-center px-2' : ''
-                    } ${
-                      isActive
-                        ? 'bg-[#1E2942] text-white shadow-sm'
-                        : 'text-slate-300 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5 shrink-0" />
-                    {aberta && <span>{item.label}</span>}
-                  </div>
-                )}
-              </NavLink>
+        {/* ===================================================
+            NAVEGAÇÃO POR SECÇÕES
+        ==================================================== */}
+
+        <nav className="px-3 py-4 space-y-6">
+          {seccoesMenu.map((seccao) => {
+            // Filtra os itens com base na permissão do utilizador
+            const itensFiltrados = seccao.itens.filter((item) =>
+              temAcesso(item.apenas, role)
             );
-          })}
 
-          <div className="h-px bg-white/10 my-3" />
+            if (itensFiltrados.length === 0) return null;
 
-          {/* ---------- Itens Gerais ---------- */}
-          {itensTopo.map((item) => {
-            const Icon = item.icon;
             return (
-              <NavLink key={item.path} to={item.path}>
-                {({ isActive }) => (
-                  <div
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                      !aberta ? 'justify-center px-2' : ''
-                    } ${
-                      isActive
-                        ? 'bg-[#5B73F7] text-white'
-                        : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5 shrink-0" />
-                    {aberta && <span>{item.label}</span>}
-                  </div>
+              <div key={seccao.titulo} className="space-y-1">
+                {/* Título da Secção */}
+                {aberta ? (
+                  <h2 className="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase">
+                    {seccao.titulo}
+                  </h2>
+                ) : (
+                  <div className="h-px bg-white/10 my-3" />
                 )}
-              </NavLink>
+
+                {/* Itens da Secção */}
+                {itensFiltrados.map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      end={item.path === '/dashboard'}
+                    >
+                      {({ isActive }) => (
+                        <div
+                          className={`
+                            flex
+                            items-center
+                            gap-3
+                            rounded-lg
+                            px-3
+                            py-2.5
+                            text-sm
+                            font-medium
+                            transition-colors
+                            ${!aberta ? 'justify-center px-2' : ''}
+                            ${
+                              isActive
+                                ? 'bg-[#202A43] text-white font-semibold'
+                                : 'text-slate-300 hover:text-white hover:bg-white/5'
+                            }
+                          `}
+                        >
+                          <Icon className="h-5 w-5 shrink-0" />
+
+                          {aberta && <span>{item.label}</span>}
+                        </div>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </div>
             );
           })}
         </nav>
       </div>
 
-      {/* Perfil e Logout */}
-      <div className="border-t border-white/10 pt-4 flex flex-col gap-2">
+      {/* =====================================================
+          PERFIL + LOGOUT
+      ====================================================== */}
+
+      <div className="border-t border-white/10 p-4">
         {aberta && (
-          <span className="text-xs text-white/50 truncate px-2" title={email}>
+          <span
+            className="block text-xs text-white/50 truncate px-2 mb-2"
+            title={email}
+          >
             {email}
           </span>
         )}
+
         <Button
           variant="ghost"
           onClick={handleLogout}
-          className={`w-full text-red-300 hover:text-red-200 hover:bg-red-500/10 ${
-            aberta ? 'justify-start gap-3' : 'justify-center px-2'
-          }`}
+          className={`
+            w-full
+            text-red-300
+            hover:text-red-200
+            hover:bg-red-500/10
+            ${
+              aberta
+                ? 'justify-start gap-3'
+                : 'justify-center px-2'
+            }
+          `}
         >
           <LogOut className="h-5 w-5 shrink-0" />
+
           {aberta && <span>Sair</span>}
         </Button>
       </div>

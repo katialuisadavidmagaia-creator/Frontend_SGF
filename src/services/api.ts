@@ -4,6 +4,7 @@ export const api = axios.create({
   baseURL: 'http://localhost:4003/api',
 });
 
+// Interceptor de Requisição: Anexa o token Bearer
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
 
@@ -14,21 +15,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Interceptor de Resposta: Captura erros de autenticação
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (
-      error.response?.status === 401 &&
-      error.response?.data?.codigo
-    ) {
-      const codigo = error.response.data.codigo;
-
-      if (
-        codigo === 'TOKEN_EXPIRADO' ||
-        codigo === 'TOKEN_INVALIDO'
-      ) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('utilizador');
+    // Se o backend responder 401 por qualquer motivo (token expirado, inválido ou em falta)
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('utilizador');
+      localStorage.removeItem('email');
+      
+      // Redireciona para o login apenas se já não estiver na página de login
+      if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
     }

@@ -7,25 +7,57 @@ import {
 } from '../types/auth.types';
 
 export interface LoginResponse {
-  sucesso?: boolean;
   token: string;
   utilizador: Utilizador;
 }
 
+// Extrai { token, utilizador } aceitando 'funcionario' ou 'utilizador' e navegando por wrappers se existirem
+function extrairResultadoLogin(payload: unknown): LoginResponse | null {
+  if (!payload || typeof payload !== 'object') return null;
+
+  const obj = payload as Record<string, unknown>;
+
+  // Extrai o objeto do utilizador vindo como 'funcionario' ou 'utilizador'
+  const util = (obj.funcionario || obj.utilizador) as Utilizador | undefined;
+
+  if (typeof obj.token === 'string' && util) {
+    return { token: obj.token, utilizador: util };
+  }
+
+  // Se a resposta vier envolvida em 'dados' ou 'data'
+  if (obj.dados) {
+    return extrairResultadoLogin(obj.dados);
+  }
+  if (obj.data) {
+    return extrairResultadoLogin(obj.data);
+  }
+
+  return null;
+}
+
 export const authService = {
   async login(payload: LoginPayload): Promise<LoginResponse> {
-    console.trace('LOGIN CHAMADO COM:', payload);
+    const { data } = await api.post('/login', payload);
 
-    const { data } = await api.post<LoginResponse>('/login', payload);
+    // eslint-disable-next-line no-console
+    console.log('[authService.login] resposta bruta do backend:', data);
 
-    localStorage.setItem('token', data.token);
+    const resultado = extrairResultadoLogin(data);
 
-    localStorage.setItem(
-      'utilizador',
-      JSON.stringify(data.utilizador)
-    );
+    if (!resultado) {
+      console.error(
+        '[authService.login] Não foi possível encontrar token/utilizador na resposta. Formato recebido:',
+        JSON.stringify(data)
+      );
+      throw new Error(
+        'Resposta de login inválida: token ou utilizador em falta.'
+      );
+    }
 
-    return data;
+    localStorage.setItem('token', resultado.token);
+    localStorage.setItem('utilizador', JSON.stringify(resultado.utilizador));
+
+    return resultado;
   },
 
   logout(): void {
@@ -63,7 +95,13 @@ export const authService = {
     }
 
     try {
-      return JSON.parse(raw) as Utilizador;
+      const parsed = JSON.parse(raw) as Utilizador;
+      // Proteção extra: nunca devolver um objeto sem role válido.
+      if (!parsed || !parsed.role) {
+        localStorage.removeItem('utilizador');
+        return null;
+      }
+      return parsed;
     } catch {
       localStorage.removeItem('utilizador');
       return null;

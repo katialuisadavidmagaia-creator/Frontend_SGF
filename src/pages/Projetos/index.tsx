@@ -13,7 +13,13 @@ import FuncionarioService from '../../services/funcionario.service';
 interface Funcionario {
   id: number;
   nome?: string;
+  name?: string;
+  nomeCompleto?: string;
   email?: string;
+  utilizador?: {
+    nome?: string;
+    email?: string;
+  };
 }
 
 const ESTADOS: EstadoProjeto[] = ['PLANEADO', 'EM_ANDAMENTO', 'CONCLUIDO', 'CANCELADO'];
@@ -623,18 +629,29 @@ export default function Projetos() {
                 </label>
 
                 <select
-                  value={form.responsavelId ?? ''}
-                  onChange={(e) => setForm({ ...form, responsavelId: e.target.value })}
-                  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                >
-                  <option value="">Sem responsável</option>
+  value={form.responsavelId ?? ''}
+  onChange={(e) => setForm({ ...form, responsavelId: e.target.value })}
+  className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+>
+  <option value="">Sem responsável</option>
 
-                  {funcionarios.map((funcionario) => (
-                    <option key={funcionario.id} value={funcionario.id}>
-                      {funcionario.nome || 'Funcionário'}
-                    </option>
-                  ))}
-                </select>
+  {funcionarios.map((funcionario) => {
+    // Procura a chave correta onde o nome está guardado
+    const nomeExibicao =
+      funcionario.nome ||
+      funcionario.nomeCompleto ||
+      funcionario.name ||
+      funcionario.utilizador?.nome ||
+      funcionario.email ||
+      `Funcionário #${funcionario.id}`;
+
+    return (
+      <option key={funcionario.id} value={funcionario.id}>
+        {nomeExibicao}
+      </option>
+    );
+  })}
+</select>
               </div>
 
               <div className="flex justify-end gap-3 border-t pt-5">

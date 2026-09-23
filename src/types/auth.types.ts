@@ -13,7 +13,7 @@ export interface Utilizador {
   id: number;
   nome: string;
   email: string;
-  role: string;
+  role: string ;
   [key: string]: any;
 }
 export interface LoginResponse {

@@ -1,17 +1,24 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../context/authcontext';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, utilizador} = useAuth(); 
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mostrarPassword, setMostrarPassword] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [aCarregar, setACarregar] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (utilizador || token) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [utilizador, navigate]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -20,10 +27,15 @@ export default function Login() {
 
     try {
       await login({
-  email,
-  senha: password,
-});
-      navigate('/dashboard');
+        email,
+        senha: password,
+      });
+
+      // Aguarda o próximo tick da renderização e redireciona com replace
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 50);
+
     } catch (err: any) {
       const mensagem =
         err?.response?.data?.mensagem ||
@@ -34,8 +46,6 @@ export default function Login() {
       setACarregar(false);
     }
   }
-
-  
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">

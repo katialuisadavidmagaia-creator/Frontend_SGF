@@ -4,16 +4,15 @@ import { Topbar } from './topbar';
 
 export function DashboardLayout() {
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen w-full bg-gray-50">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Substituído o header estático pela Topbar dinâmica */}
+      <div className="flex-1 min-w-0 flex flex-col">
         <Topbar titulo="Painel de Gestão" />
 
-        <section className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 min-w-0 overflow-y-auto p-6">
           <Outlet />
-        </section>
+        </main>
       </div>
     </div>
   );

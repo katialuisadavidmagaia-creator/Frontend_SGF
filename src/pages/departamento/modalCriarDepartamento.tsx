@@ -54,61 +54,78 @@ export default function ModalCriarDepartamento({
     }
   };
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  e.preventDefault();
 
-    if (salvando) return; // guarda contra submissão dupla (duplo-clique / Enter + clique)
+  if (salvando) return;
 
-    const nomeLimpo = nome.trim();
-    const codigoLimpo = codigo.trim().toUpperCase();
-    const descricaoLimpa = descricao.trim();
+  const nomeLimpo = nome.trim();
+  const codigoLimpo = codigo.trim().toUpperCase();
+  const descricaoLimpa = descricao.trim();
 
-    if (!nomeLimpo) {
-      toast.erro('Digite o nome do departamento');
-      return;
-    }
-
-    if (nomeLimpo.length < 2) {
-      toast.erro('O nome do departamento deve ter pelo menos 2 caracteres');
-      return;
-    }
-
-    if (!codigoLimpo) {
-      toast.erro('Digite o código do departamento');
-      return;
-    }
-
-    setSalvando(true);
-
-    try {
-      const payload: CriarDepartamentoPayload = {
-        nome: nomeLimpo,
-        codigo: codigoLimpo,
-        descricao: descricaoLimpa || undefined,
-        responsavelId: responsavelId ? Number(responsavelId) : undefined,
-        ativo,
-      };
-
-      if (typeof (departamentoService as any)?.criarDepartamento === 'function') {
-        await (departamentoService as any).criarDepartamento(payload);
-      } else {
-        await api.post('/departamentos', payload);
-      }
-
-      toast.sucesso('Departamento criado com sucesso');
-      onCriado();
-    } catch (err: any) {
-      console.error('Erro ao criar departamento:', err);
-
-      toast.erro(
-        err?.response?.data?.mensagem ||
-          err?.response?.data?.message ||
-          'Não foi possível criar o departamento'
-      );
-    } finally {
-      setSalvando(false);
-    }
+  if (!nomeLimpo) {
+    toast.erro('Digite o nome do departamento');
+    return;
   }
+
+  if (nomeLimpo.length < 2) {
+    toast.erro('O nome do departamento deve ter pelo menos 2 caracteres');
+    return;
+  }
+
+  if (!codigoLimpo) {
+    toast.erro('Digite o código do departamento');
+    return;
+  }
+
+  setSalvando(true);
+
+  try {
+    const payload: CriarDepartamentoPayload = {
+      nome: nomeLimpo,
+      codigo: codigoLimpo,
+      descricao: descricaoLimpa || undefined,
+      responsavelId: responsavelId ? Number(responsavelId) : undefined,
+      ativo,
+    };
+
+    let resposta;
+
+    if (typeof (departamentoService as any)?.criarDepartamento === 'function') {
+      resposta = await (departamentoService as any).criarDepartamento(payload);
+    } else {
+      resposta = await api.post('/departamentos', payload);
+    }
+
+    const novoDepId = resposta?.data?.id || resposta?.id;
+
+    // Se um responsável foi selecionado e o departamento foi criado,
+    // atualiza o funcionário para vincular o novo departamentoId
+    if (responsavelId && novoDepId) {
+      try {
+        await api.patch(`/funcionarios/${responsavelId}`, {
+          departamentoId: novoDepId,
+        });
+      } catch (e) {
+        // Ignora caso a rota /funcionarios/:id não exista ou use outra estrutura
+        console.warn('Não foi possível associar o departamentoId ao funcionário diretamente:', e);
+      }
+    }
+
+    toast.sucesso('Departamento criado com sucesso');
+    onCriado();
+  } catch (err: any) {
+    console.error('Erro ao criar departamento:', err);
+
+    toast.erro(
+      err?.response?.data?.mensagem ||
+        err?.response?.data?.message ||
+        'Não foi possível criar o departamento'
+    );
+  } finally {
+    setSalvando(false);
+  }
+}
 
   return (
     <div

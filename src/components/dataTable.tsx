@@ -42,7 +42,8 @@ export interface DataTableProps<T extends { id: number | string }> {
   onNew?: () => void;
   newLabel?: string;
   searchKeys?: (keyof T)[];
-  placeholder?: string; // <-- ADICIONADO
+  placeholder?: string;
+  
 }
 
 /* ============================

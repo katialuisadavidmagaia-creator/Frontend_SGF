@@ -156,11 +156,17 @@ export function Departamentos() {
             render: (departamento) =>
               departamento.descricao || 'Sem descrição',
           },
-          {
+         {
             key: 'totalFuncionarios',
-            label: 'Funcionários',
-            render: (departamento) =>
-              departamento.totalFuncionarios ?? 0,
+           label: 'Funcionários',
+           render: (departamento: any) => {
+           const total =
+           departamento.totalFuncionarios ??
+           departamento._count?.funcionarios ??
+           (Array.isArray(departamento.funcionarios) ? departamento.funcionarios.length : 0);
+
+           return <span>{total}</span>;
+            },
           },
           {
             key: 'createdAt',
